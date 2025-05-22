@@ -8,7 +8,7 @@
     Title="TestyMAUI">
 
     <ShellContent
-        Title="Home"
+        Title="Baza testów"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 

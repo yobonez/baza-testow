@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TestyLogic.Models;
 
-public partial class TestyPivContext : DbContext
+public partial class TestyDBContext : DbContext
 {
-    public TestyPivContext()
+    public TestyDBContext()
     {
     }
 
-    public TestyPivContext(DbContextOptions<TestyPivContext> options)
+    public TestyDBContext(DbContextOptions<TestyDBContext> options)
         : base(options)
     {
     }
