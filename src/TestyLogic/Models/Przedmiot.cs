@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TestyLogic.Models;
 
-public partial class Przedmioty
+public partial class Przedmiot
 {
     public string Nazwa { get; set; } = null!;
 

@@ -7,6 +7,14 @@ namespace TestyMAUI.ViewModel
 {
     public partial class QuestionsCreatorViewModel : ObservableObject
     {
+        QuestionsCreatorViewModel() 
+        {
+            Pytanie = new();
+            Odpowiedzi = new() 
+            {
+            };
+        }
+
         [ObservableProperty]
         Pytanie pytanie;
 

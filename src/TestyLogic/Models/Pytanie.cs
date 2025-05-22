@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TestyLogic.Models;
 
-public partial class Pytania
+public partial class Pytanie
 {
     public int IdPytania { get; set; }
 
@@ -13,9 +13,9 @@ public partial class Pytania
 
     public bool TypPytania { get; set; }
 
-    public virtual ICollection<Odpowiedzi> Odpowiedzis { get; set; } = new List<Odpowiedzi>();
+    public virtual ICollection<Odpowiedz> Odpowiedzi { get; set; } = new List<Odpowiedz>();
 
-    public virtual ICollection<PrzynaleznoscPytan> PrzynaleznoscPytanNavigation { get; set; } = new List<PrzynaleznoscPytan>();
+    public virtual ICollection<PrzynaleznoscPytania> PrzynaleznoscPytanNavigation { get; set; } = new List<PrzynaleznoscPytania>();
 
-    public virtual ICollection<PytaniaWZestawach> PytaniaWZestawachNavigation { get; set; } = new List<PytaniaWZestawach>();
+    public virtual ICollection<PytanieWZestawie> PytaniaWZestawachNavigation { get; set; } = new List<PytanieWZestawie>();
 }

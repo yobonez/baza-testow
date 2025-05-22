@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace TestyLogic.Models;
+namespace TestyMAUI.UIModels;
 
-public partial class Odpowiedz
+public class OdpowiedzUI
 {
     public int IdOdpowiedzi { get; set; }
 
@@ -12,6 +15,4 @@ public partial class Odpowiedz
     public bool CzyPoprawna { get; set; }
 
     public int IdPytania { get; set; }
-
-    public virtual Pytanie IdPytaniaNavigation { get; set; } = null!;
 }

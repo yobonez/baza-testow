@@ -67,7 +67,7 @@ public partial class TestyDBContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("tresc");
 
-            entity.HasOne(d => d.IdPytaniaNavigation).WithMany(p => p.Odpowiedzis)
+            entity.HasOne(d => d.IdPytaniaNavigation).WithMany(p => p.Odpowiedzi)
                 .HasForeignKey(d => d.IdPytania)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ODPOWIEDZI_PYTANIA");

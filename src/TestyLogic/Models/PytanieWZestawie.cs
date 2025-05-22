@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TestyLogic.Models;
 
-public partial class PytaniaWZestawach
+public partial class PytanieWZestawie
 {
     public int IdPytania { get; set; }
 
@@ -11,7 +11,7 @@ public partial class PytaniaWZestawach
 
     public int IdPrzedmiotu { get; set; }
 
-    public virtual Przedmioty IdPrzedmiotuNavigation { get; set; } = null!;
+    public virtual Przedmiot IdPrzedmiotuNavigation { get; set; } = null!;
 
     public virtual Pytanie IdPytaniaNavigation { get; set; } = null!;
 

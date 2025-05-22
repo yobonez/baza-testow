@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TestyLogic.Models;
+namespace TestyMAUI.UIModels;
 
-public partial class Zestaw
+public class Zestaw
 {
     public int IdZestawu { get; set; }
 
@@ -12,6 +12,4 @@ public partial class Zestaw
     public DateTime DataUtworzenia { get; set; }
 
     public int IdPrzedmiotu { get; set; }
-
-    public virtual ICollection<PytanieWZestawie> PytaniaWZestawachNavigation { get; set; } = new List<PytanieWZestawie>();
 }
