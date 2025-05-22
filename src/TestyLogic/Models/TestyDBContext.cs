@@ -15,28 +15,28 @@ public partial class TestyDBContext : DbContext
     {
     }
 
-    public virtual DbSet<Kategorie> Kategorie { get; set; }
+    public virtual DbSet<Kategoria> Kategorie { get; set; }
 
-    public virtual DbSet<Odpowiedzi> Odpowiedzi { get; set; }
+    public virtual DbSet<Odpowiedz> Odpowiedzi { get; set; }
 
-    public virtual DbSet<Przedmioty> Przedmioty { get; set; }
+    public virtual DbSet<Przedmiot> Przedmioty { get; set; }
 
-    public virtual DbSet<PrzynaleznoscPytan> PrzynaleznoscPytan { get; set; }
+    public virtual DbSet<PrzynaleznoscPytania> PrzynaleznoscPytan { get; set; }
 
-    public virtual DbSet<PytaniaOtwarte> PytaniaOtwarte { get; set; }
+    public virtual DbSet<PytanieOtwarte> PytaniaOtwarte { get; set; }
 
-    public virtual DbSet<PytaniaWZestawach> PytaniaWZestawach { get; set; }
+    public virtual DbSet<PytanieWZestawie> PytaniaWZestawach { get; set; }
 
-    public virtual DbSet<Pytania> Pytania { get; set; }
+    public virtual DbSet<Pytanie> Pytania { get; set; }
 
-    public virtual DbSet<Zestawy> Zestawy { get; set; }
+    public virtual DbSet<Zestaw> Zestawy { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("ConnectionstringTODO");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Kategorie>(entity =>
+        modelBuilder.Entity<Kategoria>(entity =>
         {
             entity.HasKey(e => e.IdKategorii);
 
@@ -51,7 +51,7 @@ public partial class TestyDBContext : DbContext
                 .HasColumnName("nazwa");
         });
 
-        modelBuilder.Entity<Odpowiedzi>(entity =>
+        modelBuilder.Entity<Odpowiedz>(entity =>
         {
             entity.HasKey(e => e.IdOdpowiedzi);
 
@@ -73,7 +73,7 @@ public partial class TestyDBContext : DbContext
                 .HasConstraintName("FK_ODPOWIEDZI_PYTANIA");
         });
 
-        modelBuilder.Entity<Przedmioty>(entity =>
+        modelBuilder.Entity<Przedmiot>(entity =>
         {
             entity.HasKey(e => e.IdPrzedmiotu).HasName("PK__PRZEDMIO__EED8D5BBB609886C");
 
@@ -88,7 +88,7 @@ public partial class TestyDBContext : DbContext
                 .HasColumnName("nazwa");
         });
 
-        modelBuilder.Entity<PrzynaleznoscPytan>(entity =>
+        modelBuilder.Entity<PrzynaleznoscPytania>(entity =>
         {
             entity.HasKey(e => new { e.IdPytania, e.IdPrzedmiotu, e.IdKategorii })
                 .HasName("PK_przynaleznosc")
@@ -116,7 +116,7 @@ public partial class TestyDBContext : DbContext
                 .HasConstraintName("FK_PRZYNALEZNOSC_PYTANIA");
         });
 
-        modelBuilder.Entity<PytaniaOtwarte>(entity =>
+        modelBuilder.Entity<PytanieOtwarte>(entity =>
         {
             entity.HasKey(e => e.IdPytania);
 
@@ -131,7 +131,7 @@ public partial class TestyDBContext : DbContext
                 .HasColumnName("klucz");
         });
 
-        modelBuilder.Entity<PytaniaWZestawach>(entity =>
+        modelBuilder.Entity<PytanieWZestawie>(entity =>
         {
             entity.HasKey(e => new { e.IdPytania, e.IdZestawu })
                 .HasName("PK_pwz")
@@ -161,7 +161,7 @@ public partial class TestyDBContext : DbContext
                 .HasConstraintName("FK_PWZ_ZESTAWY");
         });
 
-        modelBuilder.Entity<Pytania>(entity =>
+        modelBuilder.Entity<Pytanie>(entity =>
         {
             entity.HasKey(e => e.IdPytania);
 
@@ -176,7 +176,7 @@ public partial class TestyDBContext : DbContext
             entity.Property(e => e.TypPytania).HasColumnName("typPytania");
         });
 
-        modelBuilder.Entity<Zestawy>(entity =>
+        modelBuilder.Entity<Zestaw>(entity =>
         {
             entity.HasKey(e => e.IdZestawu);
 

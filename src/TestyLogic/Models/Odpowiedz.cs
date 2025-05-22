@@ -13,5 +13,5 @@ public partial class Odpowiedzi
 
     public int IdPytania { get; set; }
 
-    public virtual Pytania IdPytaniaNavigation { get; set; } = null!;
+    public virtual Pytanie IdPytaniaNavigation { get; set; } = null!;
 }

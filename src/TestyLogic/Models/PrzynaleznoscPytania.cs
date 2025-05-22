@@ -15,5 +15,5 @@ public partial class PrzynaleznoscPytan
 
     public virtual Przedmioty IdPrzedmiotuNavigation { get; set; } = null!;
 
-    public virtual Pytania IdPytaniaNavigation { get; set; } = null!;
+    public virtual Pytanie IdPytaniaNavigation { get; set; } = null!;
 }

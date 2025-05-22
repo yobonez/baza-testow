@@ -68,4 +68,13 @@
 	  <ProjectReference Include="..\TestyLogic\TestyLogic.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="QuestionsCreatorPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="TestsCreatorPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

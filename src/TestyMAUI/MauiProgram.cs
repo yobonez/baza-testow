@@ -19,8 +19,13 @@ namespace TestyMAUI
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton<MainViewModel>();
 
+            builder.Services.AddSingleton<QuestionsCreatorPage>();
+            builder.Services.AddSingleton<QuestionsCreatorViewModel>();
+            builder.Services.AddSingleton<TestsCreatorPage>();
+            builder.Services.AddSingleton<TestsCreatorViewModel>();
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

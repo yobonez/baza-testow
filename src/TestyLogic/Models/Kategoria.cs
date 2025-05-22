@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace TestyLogic.Models;
 
-public partial class Kategorie
+public partial class Kategoria
 {
     public int IdKategorii { get; set; }
 
     public string Nazwa { get; set; } = null!;
 
-    public virtual ICollection<PrzynaleznoscPytan> PrzynaleznoscPytanNavigation { get; set; } = new List<PrzynaleznoscPytan>();
+    public virtual ICollection<PrzynaleznoscPytania> PrzynaleznoscPytanNavigation { get; set; } = new List<PrzynaleznoscPytania>();
 }

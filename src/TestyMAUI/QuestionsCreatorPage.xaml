@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TestyMAUI.QuestionsCreatorPage"
+             Title="Kreator pytań">
+    <Grid Padding="75" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.35*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*"></ColumnDefinition>
+            <ColumnDefinition Width="0.6*"></ColumnDefinition>
+            <ColumnDefinition Width="50"></ColumnDefinition>
+            <ColumnDefinition Width="50"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Label Text="Pytanie"></Label>
+        <Editor Grid.Column="1"></Editor>
+        <ImageButton Grid.Column="2" MaximumHeightRequest="50" Source="clear.png"></ImageButton>
+        <ImageButton Grid.Column="3" MaximumHeightRequest="50" Source="get_from_db.png" ></ImageButton>
+
+        <ScrollView Grid.Row="1"  Grid.ColumnSpan="4">
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.2*"></ColumnDefinition>
+                    <ColumnDefinition Width="0.6*"></ColumnDefinition>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+
+                <Label Text="Odpowiedź 1"></Label>
+                <Entry Grid.Column="1"></Entry>
+                <ImageButton Source="add_item.png"  Grid.Column="2" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+                <ImageButton Source="remove_item.png"  Grid.Column="3" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+            </Grid>
+        </ScrollView>
+    </Grid>
+</ContentPage>

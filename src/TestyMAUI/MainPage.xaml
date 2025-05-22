@@ -3,26 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TestyMAUI.MainPage"
              xmlns:viewmodel="clr-namespace:TestyMAUI.ViewModel"
-             x:DataType="viewmodel:MainViewModel">
-    <Grid>
+             x:DataType="viewmodel:MainViewModel"
+             Title="Testy w MAUI">
+    <Grid RowSpacing="5">
         <Grid.RowDefinitions>
             <RowDefinition Height=".45*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height=".45*"></RowDefinition>
         </Grid.RowDefinitions>
         <HorizontalStackLayout Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Center" Spacing="10">
             <Button Text="Sprawdź swoja wiedzę"></Button>
             <Button Grid.Column="1" Text="Wprowadź zmiany w bazie pytań" Command="{Binding ToggleOptionsCommand}"></Button>
-            <VerticalStackLayout Spacing="5" 
+        </HorizontalStackLayout>
+        <VerticalStackLayout Spacing="5" 
                              Grid.Row="2"
-                             Grid.Column="1" 
                              HorizontalOptions="Center" 
                              VerticalOptions="Center"
                              IsVisible="{Binding OptionsVisible}">
-                <Button Text="Kreator pytań" BackgroundColor="BlueViolet"/>
-                <Button Text="Kreator zestawów" BackgroundColor="BlueViolet"></Button>
-            </VerticalStackLayout>
-        </HorizontalStackLayout>
-        
+            <Button Text="Kreator pytań" BackgroundColor="BlueViolet" Command="{Binding TapQuestionsCreatorCommand}"/>
+            <Button Text="Kreator zestawów" BackgroundColor="BlueViolet" Command="{Binding TapTestsCreatorCommand}"/>
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>

@@ -13,7 +13,7 @@ public partial class PytaniaWZestawach
 
     public virtual Przedmioty IdPrzedmiotuNavigation { get; set; } = null!;
 
-    public virtual Pytania IdPytaniaNavigation { get; set; } = null!;
+    public virtual Pytanie IdPytaniaNavigation { get; set; } = null!;
 
-    public virtual Zestawy IdZestawuNavigation { get; set; } = null!;
+    public virtual Zestaw IdZestawuNavigation { get; set; } = null!;
 }
