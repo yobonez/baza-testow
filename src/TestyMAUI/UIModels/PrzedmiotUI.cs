@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TestyMAUI.UIModels;
 
-public class Przedmiot
+public class PrzedmiotUI
 {
     public string Nazwa { get; set; } = null!;
 

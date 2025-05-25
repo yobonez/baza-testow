@@ -1,35 +1,50 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using TestyLogic.Models;
+using TestyMAUI.UIModels;
 
 namespace TestyMAUI.ViewModel
 {
     public partial class QuestionsCreatorViewModel : ObservableObject
     {
-        QuestionsCreatorViewModel() 
+        public QuestionsCreatorViewModel() 
         {
-            Pytanie = new();
-            Odpowiedzi = new() 
+            Pytanie = new PytanieUI(0, "", 1, false);
+            Odpowiedzi = new()
             {
+                new OdpowiedzUI(0,"", true, 0)
             };
+
+            //Kategorie = {  }
         }
 
         [ObservableProperty]
-        Pytanie pytanie;
+        PytanieUI pytanie;
 
         [ObservableProperty]
-        ObservableCollection<Odpowiedz> odpowiedzi;
+        ObservableCollection<KategoriaUI> kategorie;
+
+        [ObservableProperty]
+        ObservableCollection<PrzedmiotUI> przedmioty;
+
+        [ObservableProperty]
+        ObservableCollection<OdpowiedzUI> odpowiedzi;
 
         [RelayCommand]
         void AddAnswer()
         {
-
+            Odpowiedzi.Add(new OdpowiedzUI(0, "", false, 0));
         }
         [RelayCommand]
-        void RemoveAnswer()
+        void RemoveAnswer(OdpowiedzUI answer)
         {
-
+            if (Odpowiedzi.Contains(answer)) Odpowiedzi.Remove(answer);
+        }
+        [RelayCommand]
+        void ClearAll()
+        {
+            Pytanie = new PytanieUI(0, "", 0, false);
+            Odpowiedzi = new ObservableCollection<OdpowiedzUI>() { new OdpowiedzUI(0, "", false, 0) };
         }
     }
 }

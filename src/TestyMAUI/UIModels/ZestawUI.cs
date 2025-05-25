@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace TestyMAUI.UIModels;
 
-namespace TestyMAUI.UIModels;
-
-public class Zestaw
+public class ZestawUI
 {
     public int IdZestawu { get; set; }
 

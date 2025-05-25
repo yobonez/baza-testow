@@ -3,8 +3,16 @@ using System.Collections.Generic;
 
 namespace TestyMAUI.UIModels;
 
-public class Pytanie
+public class PytanieUI
 {
+    public PytanieUI(int id, string tresc, short pkt, bool typ)
+    {
+        IdPytania = id;
+        Tresc = tresc;
+        Punkty = pkt;
+        TypPytania = typ;
+    }
+
     public int IdPytania { get; set; }
 
     public string Tresc { get; set; } = null!;

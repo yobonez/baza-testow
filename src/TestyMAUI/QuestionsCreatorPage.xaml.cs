@@ -8,10 +8,5 @@ public partial class QuestionsCreatorPage : ContentPage
 	{
 		InitializeComponent();
 		BindingContext = vm;
-	}
-
-    private void ImageButton_Clicked(object sender, EventArgs e)
-    {
-
     }
 }
