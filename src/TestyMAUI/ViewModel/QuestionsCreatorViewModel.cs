@@ -14,12 +14,18 @@ namespace TestyMAUI.ViewModel
             {
                 new OdpowiedzUI(0,"", true, 0)
             };
-
-            //Kategorie = {  }
+            Przedmioty = new();
+            Kategorie = new();
         }
 
         [ObservableProperty]
         PytanieUI pytanie;
+
+        //[ObservableProperty]
+        //KategoriaUI wybranaKategoria;
+
+        //[ObservableProperty]
+        //PrzedmiotUI wybranyPrzedmiot;
 
         [ObservableProperty]
         ObservableCollection<KategoriaUI> kategorie;

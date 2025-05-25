@@ -20,10 +20,20 @@
         </Grid.ColumnDefinitions>
 
         <HorizontalStackLayout Spacing="10" Grid.Column="1">
-            <Label VerticalOptions="Center" Text="Kategoria:"></Label>
-            <Picker></Picker>
             <Label VerticalOptions="Center" Text="Przedmiot:"></Label>
-            <Picker></Picker>
+            <Picker ItemsSource="{Binding Przedmioty}" SelectedIndex="1">
+                <Picker.ItemDisplayBinding>
+                    <Binding Path="Nazwa"></Binding>
+                </Picker.ItemDisplayBinding>
+            </Picker>
+            
+            <Label VerticalOptions="Center" Text="Kategoria:"></Label>
+            <Picker ItemsSource="{Binding Kategorie}" SelectedIndex="1">
+                <Picker.ItemDisplayBinding>
+                    <Binding Path="Nazwa"></Binding>
+                </Picker.ItemDisplayBinding>
+                
+            </Picker>
         </HorizontalStackLayout>
         
         <Label Grid.Row="1" Text="Treść pytania"></Label>
