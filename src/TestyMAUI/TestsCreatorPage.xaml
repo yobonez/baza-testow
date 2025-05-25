@@ -2,11 +2,64 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TestyMAUI.TestsCreatorPage"
-             Title="TestsCreatorPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Kreator testów (zestawów)"
+             xmlns:models="clr-namespace:TestyMAUI.UIModels"
+             xmlns:viewmodel="clr-namespace:TestyMAUI.ViewModel"
+             x:DataType="viewmodel:TestsCreatorViewModel">
+    <Grid Padding="75" RowSpacing="10" ColumnSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.1*"></RowDefinition>
+            <RowDefinition Height="0.85*"></RowDefinition>
+            <RowDefinition Height="0.15*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.1*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="50"></ColumnDefinition>
+            <ColumnDefinition Width="50"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Label Text="Zestaw" VerticalOptions="Center"></Label>
+        <Entry Text="{Binding Zestaw.Nazwa}" Grid.Column="1"></Entry>
+        
+        <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=GetFromDBCommand}" 
+             CommandParameter="{Binding .}"
+             Source="get_from_db.png"  Grid.Column="2" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+        <ImageButton Command="{Binding ClearAllCommand}" Grid.Column="3" MaximumHeightRequest="50" Source="clear.png"></ImageButton>
+        
+        <CollectionView Grid.Row="1" Grid.ColumnSpan="3" ItemsSource="{Binding Pytania}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:PytanieUI">
+                    <Grid Padding="5" ColumnSpacing="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="45"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.1*"></ColumnDefinition>
+                            <ColumnDefinition Width="0.6*"></ColumnDefinition>
+                            <ColumnDefinition Width="50"></ColumnDefinition>
+                            <ColumnDefinition Width="50"></ColumnDefinition>
+                            <ColumnDefinition Width="50"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Text="Pytanie n" VerticalOptions="Center"></Label>
+                        <Entry Grid.Column="1" Text="{Binding Tresc}"></Entry>
+                        <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=AddQuestionCommand}"
+                                     Source="add_item.png"  Grid.Column="2" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+                        <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=RemoveQuestionCommand}" 
+                                     CommandParameter="{Binding .}"
+                                     Source="remove_item.png"  Grid.Column="3" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+                        <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=GetFromDBCommand}" 
+                                     CommandParameter="{Binding .}"
+                                     Source="get_from_db.png"  Grid.Column="4" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Button Grid.Row="4" 
+                Grid.Column="2" 
+                Grid.ColumnSpan="2" 
+                VerticalOptions="End" 
+                Text="Zatwierdź" ></Button>
+    </Grid>
 </ContentPage>

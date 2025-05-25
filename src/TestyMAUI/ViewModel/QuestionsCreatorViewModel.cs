@@ -21,12 +21,6 @@ namespace TestyMAUI.ViewModel
         [ObservableProperty]
         PytanieUI pytanie;
 
-        //[ObservableProperty]
-        //KategoriaUI wybranaKategoria;
-
-        //[ObservableProperty]
-        //PrzedmiotUI wybranyPrzedmiot;
-
         [ObservableProperty]
         ObservableCollection<KategoriaUI> kategorie;
 
