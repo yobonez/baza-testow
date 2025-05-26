@@ -31,8 +31,7 @@ public partial class TestyDBContext : DbContext
 
     public virtual DbSet<Zestaw> Zestawy { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("ConnectionstringTODO");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

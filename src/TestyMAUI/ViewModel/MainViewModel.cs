@@ -1,16 +1,26 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TestyLogic.Models;
 
 namespace TestyMAUI.ViewModel;
 
 public partial class MainViewModel : ObservableObject
 {
+    private readonly TestyDBContext _dbContext;
+
     [ObservableProperty]
     bool optionsVisible;
 
-    public MainViewModel()
+    [ObservableProperty]
+    ImageSource statusImage;
+
+    public MainViewModel(TestyDBContext dbContext)
     {
         OptionsVisible = false;
+        _dbContext = dbContext;
+        StatusImage = "db_connection_wait.png";
+        StatusImage = (dbContext.Database.CanConnect() ?
+            "db_connection_success.png" : "db_connection_fail.png");
     }
 
     [RelayCommand]
