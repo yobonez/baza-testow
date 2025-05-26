@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TestyMAUI.TestSelectorPage"
+             Title="Wybierz zestaw pytań"
+             xmlns:models="clr-namespace:TestyMAUI.UIModels"
+             xmlns:viewmodel="clr-namespace:TestyMAUI.ViewModel"
+             x:DataType="viewmodel:TestSelectorViewModel">
+
+    <Grid Padding="75">
+        <CollectionView ItemsSource="{Binding Zestawy}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ZestawUI">
+                    <Grid RowSpacing="5" Padding="5" HorizontalOptions="Fill">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                            <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                            <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Border Stroke="BlueViolet" StrokeShape="RoundRectangle 10,10,10,10" Grid.Column="1">
+                            <Grid BackgroundColor="#896691" Padding="10" RowSpacing="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Label FontSize="Caption" Text="Przedmiot"></Label>
+                                <Label FontSize="Caption" Grid.Column="1" Text="Kategoria" HorizontalOptions="End"></Label>
+                                <Label FontSize="Title" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Nazwa}"></Label>
+                                <Label FontSize="Caption" Grid.Row="2" Text="Pytania: 2137"></Label>
+                                <Label FontSize="Caption" Grid.Column="1" Grid.Row="3" Text="Pkt. do uzyskania: 2137" HorizontalOptions="End"></Label>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

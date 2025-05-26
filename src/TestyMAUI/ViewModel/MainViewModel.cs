@@ -29,5 +29,9 @@ public partial class MainViewModel : ObservableObject
     {
         await Shell.Current.GoToAsync(nameof(TestsCreatorPage));
     }
-
+    [RelayCommand]
+    async Task TapTestSelector()
+    {
+        await Shell.Current.GoToAsync(nameof(TestSelectorPage));
+    }
 }

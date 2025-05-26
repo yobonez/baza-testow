@@ -5,6 +5,7 @@ namespace TestyMAUI.UIModels;
 
 public class PytanieUI
 {
+    public PytanieUI() { }
     public PytanieUI(int id, string tresc, short pkt, bool typ)
     {
         IdPytania = id;

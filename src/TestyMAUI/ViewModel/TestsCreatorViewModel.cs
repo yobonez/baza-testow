@@ -11,9 +11,7 @@ namespace TestyMAUI.ViewModel
         public TestsCreatorViewModel()
         {
             Zestaw = new() { }; 
-            Pytania = new()
-            {
-            };
+            Pytania = new() { new PytanieUI() };
         }
 
         [ObservableProperty]
@@ -25,18 +23,20 @@ namespace TestyMAUI.ViewModel
         [RelayCommand]
         void AddQuestion()
         {
-            Pytania.Add(new PytanieUI(0, "", 0, false));
+            Pytania.Add(new PytanieUI());
         }
         [RelayCommand]
         void RemoveQuestion(PytanieUI question)
         {
-            if (Pytania.Contains(question)) Pytania.Remove(question);
+            if (!Pytania.Contains(question))
+                return;
+            Pytania.Remove(question);
         }
         [RelayCommand]
         void ClearAll()
         {
             Zestaw = new ZestawUI();
-            Pytania = new() { new PytanieUI(0, "", 0, false) };
+            Pytania = new() { new PytanieUI() };
         }
     }
 }

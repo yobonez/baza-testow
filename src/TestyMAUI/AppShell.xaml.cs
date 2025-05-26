@@ -8,6 +8,7 @@
 
             Routing.RegisterRoute(nameof(QuestionsCreatorPage), typeof(QuestionsCreatorPage));
             Routing.RegisterRoute(nameof(TestsCreatorPage), typeof(TestsCreatorPage));
+            Routing.RegisterRoute(nameof(TestSelectorPage), typeof(TestSelectorPage));
         }
     }
 }
