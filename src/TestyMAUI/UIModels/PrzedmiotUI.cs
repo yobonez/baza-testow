@@ -5,6 +5,12 @@ namespace TestyMAUI.UIModels;
 
 public class PrzedmiotUI
 {
+    public PrzedmiotUI () { }
+    public PrzedmiotUI(PrzedmiotUI initializer)
+    {
+        this.IdPrzedmiotu = initializer.IdPrzedmiotu;
+        this.Nazwa = initializer.Nazwa;
+    }
     public PrzedmiotUI(int idPrzedmiotu, string nazwa)
     {
         Nazwa = nazwa;

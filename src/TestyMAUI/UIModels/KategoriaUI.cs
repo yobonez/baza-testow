@@ -5,6 +5,7 @@ namespace TestyMAUI.UIModels;
 
 public class KategoriaUI
 {
+    public KategoriaUI() { }
     public KategoriaUI(int idKategorii, string nazwa)
     {
         IdKategorii = idKategorii;

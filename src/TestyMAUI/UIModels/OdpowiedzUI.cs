@@ -8,6 +8,7 @@ namespace TestyMAUI.UIModels;
 
 public class OdpowiedzUI
 {
+    public OdpowiedzUI() { }
     public OdpowiedzUI(int idOdpowiedzi, string tresc, bool czyPoprawna, int idPytania)
     {
         IdOdpowiedzi = idOdpowiedzi;
