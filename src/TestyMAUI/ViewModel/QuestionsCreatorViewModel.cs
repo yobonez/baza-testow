@@ -1,10 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using TestyLogic.Models;
 using TestyMAUI.UIModels;
 

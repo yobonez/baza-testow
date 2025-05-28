@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TestyMAUI.UIModels;
+﻿namespace TestyMAUI.UIModels;
 
 public class PrzedmiotUI
 {

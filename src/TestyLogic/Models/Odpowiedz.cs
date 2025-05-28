@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TestyLogic.Models;
+﻿namespace TestyLogic.Models;
 
 public partial class Odpowiedz
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-
-namespace TestyMAUI.UIModels;
+﻿namespace TestyMAUI.UIModels;
 
 public class PytanieUI
 {

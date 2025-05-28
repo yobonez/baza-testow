@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using TestyLogic.Models;
 using TestyMAUI.UIModels;
 
 namespace TestyMAUI.ViewModel
