@@ -16,4 +16,9 @@ public partial class QuestionsCreatorPage : ContentPage
     {
         await viewModel.LoadSubjectsNCategories();
     }
+
+    private void GetFromDb_Clicked(object sender, EventArgs e)
+    {
+        
+    }
 }

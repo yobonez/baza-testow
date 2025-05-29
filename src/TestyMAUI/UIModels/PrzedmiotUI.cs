@@ -1,6 +1,6 @@
 ﻿namespace TestyMAUI.UIModels;
 
-public class PrzedmiotUI
+public class PrzedmiotUI : IEquatable<PrzedmiotUI>
 {
     public PrzedmiotUI () { }
     public PrzedmiotUI(PrzedmiotUI initializer)
@@ -17,4 +17,6 @@ public class PrzedmiotUI
     public string Nazwa { get; set; } = null!;
 
     public int IdPrzedmiotu { get; set; }
+
+    public bool Equals(PrzedmiotUI? other) => other is not null && Nazwa.Equals(other.Nazwa);
 }

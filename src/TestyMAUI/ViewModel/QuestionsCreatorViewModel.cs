@@ -24,8 +24,10 @@ namespace TestyMAUI.ViewModel
             KategoriaUI kategoria = new(0, "");
             ObservableCollection<OdpowiedzUI> odpowiedzi = new() { new OdpowiedzUI(0, "", false, 0) };
 
-            Pytanie = new PytanieUI(0, "", 1, false, przedmiot, kategoria, odpowiedzi.ToList());
-            OdpowiedziNaPytanie = odpowiedzi;
+            Pytanie = new PytanieUI(0, "", 1, false);
+            WybranyPrzedmiot = przedmiot;
+            WybranaKategoria = kategoria;
+            Odpowiedzi = odpowiedzi;
         }
 
         public async Task LoadSubjectsNCategories()
@@ -52,7 +54,13 @@ namespace TestyMAUI.ViewModel
         PytanieUI pytanie;
 
         [ObservableProperty]
-        ObservableCollection<OdpowiedzUI> odpowiedziNaPytanie;
+        ObservableCollection<OdpowiedzUI> odpowiedzi;
+
+        [ObservableProperty]
+        PrzedmiotUI wybranyPrzedmiot;
+
+        [ObservableProperty]
+        KategoriaUI wybranaKategoria;
 
         [ObservableProperty]
         ObservableCollection<PrzedmiotUI> przedmioty;
@@ -63,14 +71,14 @@ namespace TestyMAUI.ViewModel
         [RelayCommand]
         void AddAnswer()
         {
-            OdpowiedziNaPytanie.Add(new OdpowiedzUI(0, "", false, 0));
+            Odpowiedzi.Add(new OdpowiedzUI(0, "", false, 0));
         }
         [RelayCommand]
         void RemoveAnswer(OdpowiedzUI answer)
         {
-            if (!OdpowiedziNaPytanie.Contains(answer))
+            if (!Odpowiedzi.Contains(answer))
                 return;
-            OdpowiedziNaPytanie.Remove(answer);
+            Odpowiedzi.Remove(answer);
         }
         [RelayCommand]
         void ClearAll()
@@ -106,27 +114,23 @@ namespace TestyMAUI.ViewModel
                 Punkty = pytanieDto.Punkty
             };
 
-            // możliwe, że chyba nie ma sensu trzymać przedmiotu, kategorii i odpowiedzi w tym modelu,
-            // jak i tak będę musiał znowu to wyciągać, ale za to jest to czytelniejsze moim zdaniem,
-            // że pytanie ma swoją kategorie, przedmiot, odpowiedzi, niż jakby to było wszystko oddzielnie.
-            Pytanie.Przedmiot = new PrzedmiotUI()
+            WybranyPrzedmiot = new PrzedmiotUI()
             {
                 IdPrzedmiotu = przedmiotDto.IdPrzedmiotu,
                 Nazwa = przedmiotDto.Nazwa
             };
-            Pytanie.Kategoria = new KategoriaUI()
+            WybranaKategoria = new KategoriaUI()
             {
                 IdKategorii = kategoriaDto.IdKategorii,
                 Nazwa = kategoriaDto.Nazwa
             };
-            Pytanie.Odpowiedzi = pytanieDto.Odpowiedzi.Select(el => new OdpowiedzUI()
+            Odpowiedzi = new ObservableCollection<OdpowiedzUI>(pytanieDto.Odpowiedzi.Select(el => new OdpowiedzUI()
             {
                 IdPytania = el.IdPytania,
                 Tresc = el.Tresc,
                 CzyPoprawna = el.CzyPoprawna,
                 IdOdpowiedzi = el.IdOdpowiedzi
-            }).ToList();
-            OdpowiedziNaPytanie = new ObservableCollection<OdpowiedzUI>(Pytanie.Odpowiedzi);
+            }));
         }
     }
 }

@@ -28,18 +28,17 @@
 
         <HorizontalStackLayout Spacing="10" Grid.Column="1" Loaded="HorizontalStackLayout_Loaded">
             <Label VerticalOptions="Center" Text="Przedmiot:"></Label>
-            <Picker ItemsSource="{Binding Przedmioty}" SelectedIndex="1">
+            <Picker x:Name="SubjectPicker" SelectedItem="{Binding WybranyPrzedmiot}" ItemsSource="{Binding Przedmioty}" >
                 <Picker.ItemDisplayBinding>
                     <Binding Path="Nazwa"></Binding>
                 </Picker.ItemDisplayBinding>
             </Picker>
-            
+
             <Label VerticalOptions="Center" Text="Kategoria:"></Label>
-            <Picker ItemsSource="{Binding Kategorie}" SelectedIndex="1">
+            <Picker x:Name="CategoryPicker" SelectedItem="{Binding WybranaKategoria}" ItemsSource="{Binding Kategorie}">
                 <Picker.ItemDisplayBinding>
                     <Binding Path="Nazwa"></Binding>
-                </Picker.ItemDisplayBinding>
-                
+                </Picker.ItemDisplayBinding>    
             </Picker>
         </HorizontalStackLayout>
         
@@ -47,9 +46,9 @@
         <Editor Grid.Row="1" Grid.Column="1" Text="{Binding Pytanie.Tresc}"></Editor>
 
         <ImageButton Grid.Row="1" Command="{Binding ClearAllCommand}" Grid.Column="2" MaximumHeightRequest="50" Source="clear.png"></ImageButton>
-        <ImageButton Grid.Row="1" Command="{Binding LoadQuestionCommand}" Grid.Column="3" MaximumHeightRequest="50" Source="get_from_db.png" ></ImageButton>
+        <ImageButton Grid.Row="1" Command="{Binding LoadQuestionCommand}" Grid.Column="3" MaximumHeightRequest="50" Source="get_from_db.png" Clicked="GetFromDb_Clicked" ></ImageButton>
 
-        <CollectionView Grid.Row="2"  Grid.ColumnSpan="4" ItemsSource="{Binding OdpowiedziNaPytanie}">
+        <CollectionView Grid.Row="2"  Grid.ColumnSpan="4" ItemsSource="{Binding Odpowiedzi}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:OdpowiedzUI">
                     <Grid Grid.Row="1" ColumnSpacing="10" Padding="5">

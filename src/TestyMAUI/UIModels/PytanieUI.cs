@@ -3,15 +3,12 @@
 public class PytanieUI
 {
     public PytanieUI() { }
-    public PytanieUI(int id, string tresc, short pkt, bool typ, PrzedmiotUI? przedmiot, KategoriaUI kategoria, List<OdpowiedzUI> odpowiedzi)
+    public PytanieUI(int id, string tresc, short pkt, bool typ)
     {
         IdPytania = id;
         Tresc = tresc;
         Punkty = pkt;
         TypPytania = typ;
-        Przedmiot = przedmiot;
-        Kategoria = kategoria;
-        Odpowiedzi = odpowiedzi;
     }
 
     public int IdPytania { get; set; }
@@ -21,7 +18,4 @@ public class PytanieUI
     public short Punkty { get; set; }
 
     public bool TypPytania { get; set; }
-    public PrzedmiotUI? Przedmiot { get; set; }
-    public KategoriaUI? Kategoria { get; set; }
-    public List<OdpowiedzUI>? Odpowiedzi { get; set; }
 }
