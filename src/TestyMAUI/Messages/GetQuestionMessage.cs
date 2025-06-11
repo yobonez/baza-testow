@@ -8,9 +8,9 @@ using TestyMAUI.UIModels;
 
 namespace TestyMAUI.Messages
 {
-    public class GetQuestionMessage : ValueChangedMessage<PytanieUI>
+    public class GetQuestionMessage : ValueChangedMessage<PytanieSearchEntryUI>
     {
-        public GetQuestionMessage(PytanieUI value) : base(value)
+        public GetQuestionMessage(PytanieSearchEntryUI value) : base(value)
         {
         }
     }

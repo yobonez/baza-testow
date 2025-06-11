@@ -16,6 +16,7 @@ namespace TestyMAUI.ViewModel
         public QuestionsCreatorViewModel(TestyDBContext dbContext) 
         {
             _dbContext = dbContext;
+
             ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
 
             ResetFields();
@@ -94,10 +95,9 @@ namespace TestyMAUI.ViewModel
         {
             ResetFields();
         }
-        [RelayCommand]
+
         async Task LoadQuestion()
         {
-            // Na razie ładowanie jednego pytania, trzeba zacząć od najprostszej rzeczy
             var pytanieDto = await _dbContext.Pytania
                 .Include(el => el.PrzynaleznoscPytanNavigation)
                     .ThenInclude(subEl => subEl.IdPrzedmiotuNavigation)
@@ -146,10 +146,6 @@ namespace TestyMAUI.ViewModel
             EditMode = !EditMode;
             ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
 
-            if (EditMode)
-            {
-                //Pytanie = WeakReferenceMessenger.Default.Send<QuestionRequestMessage>();
-            }
             return EditMode;
         }
 
@@ -158,10 +154,33 @@ namespace TestyMAUI.ViewModel
         {
             // only if there's data. If there is no data, then immediately change to db icon, so user
             // can interact after cancelling
+
+            // if returned data null, then immediately db icon, edit mode off
+
             if(SwitchEditMode())
             {
+                RegisterQuestionMessage();
                 await Shell.Current.GoToAsync(nameof(SearchPage));
             }
+            if (Pytanie.IdPytania == 0) SwitchEditMode();
+        }
+
+        private void RegisterQuestionMessage()
+        {
+            WeakReferenceMessenger.Default.Register<GetQuestionMessage>(this, (r, m) =>
+            {
+                MainThread.BeginInvokeOnMainThread(() => {
+                    PytanieSearchEntryUI test = m.Value;
+
+                    Pytanie = new PytanieUI(test.pytanie.IdPytania, test.pytanie.Tresc, test.pytanie.Punkty, test.pytanie.TypPytania);
+
+                    WybranyPrzedmiot = new PrzedmiotUI(test.przedmiot.IdPrzedmiotu, test.przedmiot.Nazwa);
+
+                    WybranaKategoria = new KategoriaUI(test.kategoria.IdKategorii, test.kategoria.Nazwa);
+
+                    Odpowiedzi = new ObservableCollection<OdpowiedzUI>(test.odpowiedzi);
+                }); 
+            });
         }
     }
 }

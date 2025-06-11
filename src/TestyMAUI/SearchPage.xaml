@@ -36,5 +36,8 @@
                 </dg:PaletteCollection>
             </dg:DataGrid.RowsBackgroundColorPalette>
         </dg:DataGrid>
+
+        <Button Grid.Row="2" Command="{Binding TapConfirmCommand}" MaximumHeightRequest="50"></Button>
+
     </Grid>
 </ContentPage>
