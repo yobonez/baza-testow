@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.UI.Composition;
 using System.Collections.ObjectModel;
 using TestyLogic.Models;
 using TestyMAUI.Messages;
@@ -15,15 +14,19 @@ namespace TestyMAUI.ViewModel
         private readonly TestyDBContext _dbContext;
 
         [ObservableProperty]
-        ObservableCollection<PytanieSearchEntryUI> pytania;
+        ObservableCollection<PytanieUI> pytania;
 
         // send back to prev ui
         [ObservableProperty]
-        PytanieSearchEntryUI wybranePytanie;
+        PytanieUI wybranePytanie;
+
+        List<PytanieSearchEntryUI> fullPytania;
+
         public SearchViewModel(TestyDBContext dbContext)
         {
             _dbContext = dbContext;
-            Pytania = new ObservableCollection<PytanieSearchEntryUI>();
+            Pytania = new ObservableCollection<PytanieUI>();
+            fullPytania = new List<PytanieSearchEntryUI>();
         }
 
         public async Task LoadAllQuestions(bool forceRefresh = false)
@@ -68,12 +71,11 @@ namespace TestyMAUI.ViewModel
                 PrzedmiotUI przToSend = new PrzedmiotUI(przedm.IdPrzedmiotu, przedm.Nazwa);
                 List<OdpowiedzUI> odpToSend = odpow.Select(odp => new OdpowiedzUI(odp.IdOdpowiedzi, odp.Tresc, odp.CzyPoprawna, odp.IdPytania))
                                                    .ToList();
-                
-                
 
-                PytanieSearchEntryUI toSend = new PytanieSearchEntryUI(pytToSend, przToSend, katToSend, odpToSend);
 
-                Pytania.Add(toSend);
+                fullPytania.Add(new PytanieSearchEntryUI(pytToSend, przToSend, katToSend, odpToSend));
+
+                Pytania.Add(pytToSend);
             });
         }
 
@@ -91,7 +93,10 @@ namespace TestyMAUI.ViewModel
         [RelayCommand]
         async Task TapConfirm()
         {
-            WeakReferenceMessenger.Default.Send<GetQuestionMessage>(new GetQuestionMessage(WybranePytanie));
+            PytanieSearchEntryUI toSend = (from fullpyt in fullPytania
+                                           where fullpyt.pytanie.IdPytania == WybranePytanie.IdPytania
+                                           select fullpyt).Single();
+            WeakReferenceMessenger.Default.Send<GetQuestionMessage>(new GetQuestionMessage(toSend));
             await GoBack();
         }
     }

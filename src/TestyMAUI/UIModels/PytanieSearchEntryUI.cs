@@ -21,5 +21,12 @@ namespace TestyMAUI.UIModels
             kategoria = kat;
             odpowiedzi = odp;
         }
+        public PytanieSearchEntryUI(PytanieSearchEntryUI other)
+        {
+            pytanie = other.pytanie;
+            przedmiot = other.przedmiot;
+            kategoria = other.kategoria;
+            odpowiedzi = other.odpowiedzi;
+        }
     }
 }

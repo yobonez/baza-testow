@@ -96,50 +96,50 @@ namespace TestyMAUI.ViewModel
             ResetFields();
         }
 
-        async Task LoadQuestion()
-        {
-            var pytanieDto = await _dbContext.Pytania
-                .Include(el => el.PrzynaleznoscPytanNavigation)
-                    .ThenInclude(subEl => subEl.IdPrzedmiotuNavigation)
-                .Include(el => el.PrzynaleznoscPytanNavigation)
-                    .ThenInclude(subEl => subEl.IdKategoriiNavigation)
-                .Include(el => el.Odpowiedzi)
-                .FirstOrDefaultAsync();
+        //async Task LoadQuestion()
+        //{
+        //    var pytanieDto = await _dbContext.Pytania
+        //        .Include(el => el.PrzynaleznoscPytanNavigation)
+        //            .ThenInclude(subEl => subEl.IdPrzedmiotuNavigation)
+        //        .Include(el => el.PrzynaleznoscPytanNavigation)
+        //            .ThenInclude(subEl => subEl.IdKategoriiNavigation)
+        //        .Include(el => el.Odpowiedzi)
+        //        .FirstOrDefaultAsync();
 
-            Przedmiot przedmiotDto = pytanieDto.PrzynaleznoscPytanNavigation
-                .Select(obj => obj.IdPrzedmiotuNavigation)
-                .Take(1)
-                .Single();
-            Kategoria kategoriaDto = pytanieDto.PrzynaleznoscPytanNavigation
-                .Select(obj => obj.IdKategoriiNavigation)
-                .Take(1)
-                .Single();
+        //    Przedmiot przedmiotDto = pytanieDto.PrzynaleznoscPytanNavigation
+        //        .Select(obj => obj.IdPrzedmiotuNavigation)
+        //        .Take(1)
+        //        .Single();
+        //    Kategoria kategoriaDto = pytanieDto.PrzynaleznoscPytanNavigation
+        //        .Select(obj => obj.IdKategoriiNavigation)
+        //        .Take(1)
+        //        .Single();
 
-            Pytanie = new PytanieUI()
-            {
-                IdPytania = pytanieDto.IdPytania,
-                Tresc = pytanieDto.Tresc,
-                TypPytania = pytanieDto.TypPytania,
-                Punkty = pytanieDto.Punkty
-            };
-            WybranyPrzedmiot = new PrzedmiotUI()
-            {
-                IdPrzedmiotu = przedmiotDto.IdPrzedmiotu,
-                Nazwa = przedmiotDto.Nazwa
-            };
-            WybranaKategoria = new KategoriaUI()
-            {
-                IdKategorii = kategoriaDto.IdKategorii,
-                Nazwa = kategoriaDto.Nazwa
-            };
-            Odpowiedzi = new ObservableCollection<OdpowiedzUI>(pytanieDto.Odpowiedzi.Select(el => new OdpowiedzUI()
-            {
-                IdPytania = el.IdPytania,
-                Tresc = el.Tresc,
-                CzyPoprawna = el.CzyPoprawna,
-                IdOdpowiedzi = el.IdOdpowiedzi
-            }));
-        }
+        //    Pytanie = new PytanieUI()
+        //    {
+        //        IdPytania = pytanieDto.IdPytania,
+        //        Tresc = pytanieDto.Tresc,
+        //        TypPytania = pytanieDto.TypPytania,
+        //        Punkty = pytanieDto.Punkty
+        //    };
+        //    WybranyPrzedmiot = new PrzedmiotUI()
+        //    {
+        //        IdPrzedmiotu = przedmiotDto.IdPrzedmiotu,
+        //        Nazwa = przedmiotDto.Nazwa
+        //    };
+        //    WybranaKategoria = new KategoriaUI()
+        //    {
+        //        IdKategorii = kategoriaDto.IdKategorii,
+        //        Nazwa = kategoriaDto.Nazwa
+        //    };
+        //    Odpowiedzi = new ObservableCollection<OdpowiedzUI>(pytanieDto.Odpowiedzi.Select(el => new OdpowiedzUI()
+        //    {
+        //        IdPytania = el.IdPytania,
+        //        Tresc = el.Tresc,
+        //        CzyPoprawna = el.CzyPoprawna,
+        //        IdOdpowiedzi = el.IdOdpowiedzi
+        //    }));
+        //}
 
         bool SwitchEditMode()
         {
@@ -162,11 +162,15 @@ namespace TestyMAUI.ViewModel
                 RegisterQuestionMessage();
                 await Shell.Current.GoToAsync(nameof(SearchPage));
             }
-            if (Pytanie.IdPytania == 0) SwitchEditMode();
+            else
+            {
+                ResetFields();
+            }
         }
 
         private void RegisterQuestionMessage()
         {
+            WeakReferenceMessenger.Default.Unregister<GetQuestionMessage>(this);
             WeakReferenceMessenger.Default.Register<GetQuestionMessage>(this, (r, m) =>
             {
                 MainThread.BeginInvokeOnMainThread(() => {
@@ -179,6 +183,9 @@ namespace TestyMAUI.ViewModel
                     WybranaKategoria = new KategoriaUI(test.kategoria.IdKategorii, test.kategoria.Nazwa);
 
                     Odpowiedzi = new ObservableCollection<OdpowiedzUI>(test.odpowiedzi);
+
+                    if (Pytanie.IdPytania == 0)
+                        SwitchEditMode();
                 }); 
             });
         }
