@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using TestyLogic.Models;
+using TestyMAUI.Messages;
 using TestyMAUI.UIModels;
 
 namespace TestyMAUI.ViewModel
@@ -14,10 +16,35 @@ namespace TestyMAUI.ViewModel
         public QuestionsCreatorViewModel(TestyDBContext dbContext) 
         {
             _dbContext = dbContext;
+            ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
 
             ResetFields();
         }
 
+        [ObservableProperty]
+        bool editMode;
+
+        [ObservableProperty]
+        ImageSource buttonImageGetFromDb;
+
+        [ObservableProperty]
+        PytanieUI pytanie;
+
+        [ObservableProperty]
+        ObservableCollection<OdpowiedzUI> odpowiedzi;
+
+        [ObservableProperty]
+        PrzedmiotUI wybranyPrzedmiot;
+
+        [ObservableProperty]
+        KategoriaUI wybranaKategoria;
+
+        [ObservableProperty]
+        ObservableCollection<PrzedmiotUI> przedmioty;
+
+        [ObservableProperty]
+        ObservableCollection<KategoriaUI> kategorie;
+        // TODO: subscribe somewhere about here
         public void ResetFields()
         {
             PrzedmiotUI przedmiot = new(0, "");
@@ -49,24 +76,6 @@ namespace TestyMAUI.ViewModel
                 }
             ));
         }
-
-        [ObservableProperty]
-        PytanieUI pytanie;
-
-        [ObservableProperty]
-        ObservableCollection<OdpowiedzUI> odpowiedzi;
-
-        [ObservableProperty]
-        PrzedmiotUI wybranyPrzedmiot;
-
-        [ObservableProperty]
-        KategoriaUI wybranaKategoria;
-
-        [ObservableProperty]
-        ObservableCollection<PrzedmiotUI> przedmioty;
-
-        [ObservableProperty]
-        ObservableCollection<KategoriaUI> kategorie;
 
         [RelayCommand]
         void AddAnswer()
@@ -113,7 +122,6 @@ namespace TestyMAUI.ViewModel
                 TypPytania = pytanieDto.TypPytania,
                 Punkty = pytanieDto.Punkty
             };
-
             WybranyPrzedmiot = new PrzedmiotUI()
             {
                 IdPrzedmiotu = przedmiotDto.IdPrzedmiotu,
@@ -131,6 +139,29 @@ namespace TestyMAUI.ViewModel
                 CzyPoprawna = el.CzyPoprawna,
                 IdOdpowiedzi = el.IdOdpowiedzi
             }));
+        }
+
+        bool SwitchEditMode()
+        {
+            EditMode = !EditMode;
+            ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
+
+            if (EditMode)
+            {
+                //Pytanie = WeakReferenceMessenger.Default.Send<QuestionRequestMessage>();
+            }
+            return EditMode;
+        }
+
+        [RelayCommand]
+        async Task TapSearch()
+        {
+            // only if there's data. If there is no data, then immediately change to db icon, so user
+            // can interact after cancelling
+            if(SwitchEditMode())
+            {
+                await Shell.Current.GoToAsync(nameof(SearchPage));
+            }
         }
     }
 }

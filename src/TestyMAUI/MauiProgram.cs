@@ -30,8 +30,8 @@ namespace TestyMAUI
             builder.Services.AddSingleton<TestsCreatorViewModel>();
             builder.Services.AddSingleton<TestSelectorPage>();
             builder.Services.AddSingleton<TestSelectorViewModel>();
-            builder.Services.AddTransient<SearchPage>();
-            builder.Services.AddTransient<SearchViewModel>();
+            builder.Services.AddSingleton<SearchPage>();
+            builder.Services.AddSingleton<SearchViewModel>();
 
             var assembly = Assembly.GetExecutingAssembly();
             using var stream = assembly.GetManifestResourceStream("TestyMAUI.appsettings.json");
