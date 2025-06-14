@@ -78,6 +78,7 @@
                 Grid.Column="2" 
                 Grid.ColumnSpan="2" 
                 VerticalOptions="End" 
-                Text="Zatwierdź" ></Button>
+                Text="{Binding ButtonMode}"
+                Command=""></Button>
     </Grid>
 </ContentPage>

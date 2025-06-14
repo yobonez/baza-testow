@@ -48,7 +48,9 @@ namespace TestyMAUI.ViewModel
 
             dbPytania.ForEach(pyt =>
             {
-                PytanieUI pytToSend = new PytanieUI(pyt.IdPytania, pyt.Tresc, pyt.Punkty, pyt.TypPytania);
+                if (pyt.TypPytania == true)
+                    return;
+                PytanieUI pytToAdd = new PytanieUI(pyt.IdPytania, pyt.Tresc, pyt.Punkty, pyt.TypPytania);
 
                 Kategoria kateg = (from kat in dbKategorie
                                    where kat.IdKategorii == (from przyn in pyt.PrzynaleznoscPytanNavigation
@@ -67,15 +69,15 @@ namespace TestyMAUI.ViewModel
                                          select odp).ToList();
 
 
-                KategoriaUI katToSend = new KategoriaUI(kateg.IdKategorii, kateg.Nazwa);
-                PrzedmiotUI przToSend = new PrzedmiotUI(przedm.IdPrzedmiotu, przedm.Nazwa);
-                List<OdpowiedzUI> odpToSend = odpow.Select(odp => new OdpowiedzUI(odp.IdOdpowiedzi, odp.Tresc, odp.CzyPoprawna, odp.IdPytania))
+                KategoriaUI katToAdd = new KategoriaUI(kateg.IdKategorii, kateg.Nazwa);
+                PrzedmiotUI przToAdd = new PrzedmiotUI(przedm.IdPrzedmiotu, przedm.Nazwa);
+                List<OdpowiedzUI> odpToAdd = odpow.Select(odp => new OdpowiedzUI(odp.IdOdpowiedzi, odp.Tresc, odp.CzyPoprawna, odp.IdPytania))
                                                    .ToList();
 
 
-                fullPytania.Add(new PytanieSearchEntryUI(pytToSend, przToSend, katToSend, odpToSend));
+                fullPytania.Add(new PytanieSearchEntryUI(pytToAdd, przToAdd, katToAdd, odpToAdd));
 
-                Pytania.Add(pytToSend);
+                Pytania.Add(pytToAdd);
             });
         }
 

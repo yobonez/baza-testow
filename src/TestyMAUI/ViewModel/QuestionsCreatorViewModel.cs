@@ -18,12 +18,21 @@ namespace TestyMAUI.ViewModel
             _dbContext = dbContext;
 
             ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
+            ButtonMode = (EditMode) ? "Edytuj" : "Zatwierdź";
 
             ResetFields();
         }
 
+        #region props
+        List<Przedmiot> przedmiotyDto;
+        List<Kategoria> kategorieDto;
+        //PytanieSearchEntryUI fullPytanie;
+
         [ObservableProperty]
         bool editMode;
+
+        [ObservableProperty]
+        string buttonMode;
 
         [ObservableProperty]
         ImageSource buttonImageGetFromDb;
@@ -45,37 +54,41 @@ namespace TestyMAUI.ViewModel
 
         [ObservableProperty]
         ObservableCollection<KategoriaUI> kategorie;
-        // TODO: subscribe somewhere about here
+        #endregion props
+
         public void ResetFields()
         {
             PrzedmiotUI przedmiot = new(0, "");
             KategoriaUI kategoria = new(0, "");
             ObservableCollection<OdpowiedzUI> odpowiedzi = new() { new OdpowiedzUI(0, "", false, 0) };
 
-            Pytanie = new PytanieUI(0, "", 1, false);
+            Pytanie = new PytanieUI(0, "", 5, false);
             WybranyPrzedmiot = przedmiot;
             WybranaKategoria = kategoria;
             Odpowiedzi = odpowiedzi;
+
+            //fullPytanie = new PytanieSearchEntryUI(Pytanie, WybranyPrzedmiot, WybranaKategoria, Odpowiedzi.ToList());
         }
 
         public async Task LoadSubjectsNCategories()
         {
-            // TODO: when loading a question, change selected item to the ones, that correspond to
-            // question's subject and category
-            List<Przedmiot> przedmiotyDto = await _dbContext.Przedmioty.ToListAsync();
+            // równoległe taski, Task.WhenAll
+            przedmiotyDto = await _dbContext.Przedmioty.ToListAsync();
             Przedmioty = new ObservableCollection<PrzedmiotUI> (przedmiotyDto.Select(
                 el => new PrzedmiotUI() {
                     IdPrzedmiotu = el.IdPrzedmiotu, Nazwa = el.Nazwa 
                 }
             ));
 
-            List<Kategoria> kategorieDto = await _dbContext.Kategorie.ToListAsync();
+            kategorieDto = await _dbContext.Kategorie.ToListAsync();
             Kategorie = new ObservableCollection<KategoriaUI>(kategorieDto.Select(
                 el => new KategoriaUI()
                 {
                     IdKategorii = el.IdKategorii, Nazwa = el.Nazwa
                 }
             ));
+            // TODO: IModel zrobić var przedmiotydto i potem as cośtam
+            // TODO: mappera używać
         }
 
         [RelayCommand]
@@ -95,51 +108,6 @@ namespace TestyMAUI.ViewModel
         {
             ResetFields();
         }
-
-        //async Task LoadQuestion()
-        //{
-        //    var pytanieDto = await _dbContext.Pytania
-        //        .Include(el => el.PrzynaleznoscPytanNavigation)
-        //            .ThenInclude(subEl => subEl.IdPrzedmiotuNavigation)
-        //        .Include(el => el.PrzynaleznoscPytanNavigation)
-        //            .ThenInclude(subEl => subEl.IdKategoriiNavigation)
-        //        .Include(el => el.Odpowiedzi)
-        //        .FirstOrDefaultAsync();
-
-        //    Przedmiot przedmiotDto = pytanieDto.PrzynaleznoscPytanNavigation
-        //        .Select(obj => obj.IdPrzedmiotuNavigation)
-        //        .Take(1)
-        //        .Single();
-        //    Kategoria kategoriaDto = pytanieDto.PrzynaleznoscPytanNavigation
-        //        .Select(obj => obj.IdKategoriiNavigation)
-        //        .Take(1)
-        //        .Single();
-
-        //    Pytanie = new PytanieUI()
-        //    {
-        //        IdPytania = pytanieDto.IdPytania,
-        //        Tresc = pytanieDto.Tresc,
-        //        TypPytania = pytanieDto.TypPytania,
-        //        Punkty = pytanieDto.Punkty
-        //    };
-        //    WybranyPrzedmiot = new PrzedmiotUI()
-        //    {
-        //        IdPrzedmiotu = przedmiotDto.IdPrzedmiotu,
-        //        Nazwa = przedmiotDto.Nazwa
-        //    };
-        //    WybranaKategoria = new KategoriaUI()
-        //    {
-        //        IdKategorii = kategoriaDto.IdKategorii,
-        //        Nazwa = kategoriaDto.Nazwa
-        //    };
-        //    Odpowiedzi = new ObservableCollection<OdpowiedzUI>(pytanieDto.Odpowiedzi.Select(el => new OdpowiedzUI()
-        //    {
-        //        IdPytania = el.IdPytania,
-        //        Tresc = el.Tresc,
-        //        CzyPoprawna = el.CzyPoprawna,
-        //        IdOdpowiedzi = el.IdOdpowiedzi
-        //    }));
-        //}
 
         bool SwitchEditMode()
         {
