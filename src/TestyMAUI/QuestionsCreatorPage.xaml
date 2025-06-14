@@ -79,6 +79,7 @@
                 Grid.ColumnSpan="2" 
                 VerticalOptions="End" 
                 Text="{Binding ButtonMode}"
-                Command=""></Button>
+                ></Button>
+        <!--Command=""-->
     </Grid>
 </ContentPage>

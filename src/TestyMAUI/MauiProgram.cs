@@ -1,10 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System.Reflection;
-using TestyLogic.Models;
-using TestyMAUI.Configuration;
-using TestyMAUI.ViewModel;
+﻿using Microsoft.Extensions.Logging;
+using TestyMAUI.Services;
 
 namespace TestyMAUI
 {
@@ -21,38 +16,9 @@ namespace TestyMAUI
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<MainViewModel>();
-
-            builder.Services.AddSingleton<QuestionsCreatorPage>();
-            builder.Services.AddSingleton<QuestionsCreatorViewModel>();
-            builder.Services.AddSingleton<TestsCreatorPage>();
-            builder.Services.AddSingleton<TestsCreatorViewModel>();
-            builder.Services.AddSingleton<TestSelectorPage>();
-            builder.Services.AddSingleton<TestSelectorViewModel>();
-            builder.Services.AddSingleton<SearchPage>();
-            builder.Services.AddSingleton<SearchViewModel>();
-
-            var assembly = Assembly.GetExecutingAssembly();
-            using var stream = assembly.GetManifestResourceStream("TestyMAUI.appsettings.json");
-
-            if (stream is not null)
-            {
-                var config = new ConfigurationBuilder()
-                    .AddJsonStream(stream)
-                    .Build();
-
-                SQLServer connectionOptions = config.GetRequiredSection("SQL Server").Get<SQLServer>();
-
-                builder.Configuration.AddConfiguration(config);
-                builder.Services.AddDbContext<TestyDBContext>(options => options.UseSqlServer(
-                    $"Server={connectionOptions.Server};" +
-                    $"database={connectionOptions.Database};" +
-                    $"User ID={connectionOptions.User};" +
-                    $"password={connectionOptions.Password};" +
-                    $"TrustServerCertificate=true"
-                ));
-            }
+            builder.Services.AddPages();
+            builder.Services.AddViewModels();
+            builder.Services.AddDb(builder.Configuration);
 
 #if DEBUG
             builder.Logging.AddDebug();
