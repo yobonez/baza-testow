@@ -8,184 +8,205 @@ using TestyLogic.Models;
 using TestyMAUI.Messages;
 using TestyMAUI.UIModels;
 
-namespace TestyMAUI.ViewModel
+namespace TestyMAUI.ViewModel;
+
+public partial class QuestionsCreatorViewModel : ObservableObject
 {
-    public partial class QuestionsCreatorViewModel : ObservableObject
+    private readonly TestyDBContext _dbContext;
+    private readonly IMapper _mapper;
+
+    public QuestionsCreatorViewModel(TestyDBContext dbContext, IMapper mapper) 
     {
-        private readonly TestyDBContext _dbContext;
-        private readonly IMapper _mapper;
+        _dbContext = dbContext;
+        _mapper = mapper;
 
-        public QuestionsCreatorViewModel(TestyDBContext dbContext, IMapper mapper) 
+        UpdateButtonStates();
+        ResetFields();
+    }
+
+    #region props
+    List<Przedmiot> przedmiotyDto;
+    List<Kategoria> kategorieDto;
+    //PytanieSearchEntryUI fullPytanie;
+
+    [ObservableProperty]
+    bool editMode;
+
+    [ObservableProperty]
+    string buttonMode;
+
+    [ObservableProperty]
+    ImageSource buttonImageGetFromDb;
+
+    [ObservableProperty]
+    PytanieUI pytanie;
+
+    [ObservableProperty]
+    ObservableCollection<OdpowiedzUI> odpowiedzi;
+
+    [ObservableProperty]
+    PrzedmiotUI wybranyPrzedmiot;
+
+    [ObservableProperty]
+    KategoriaUI wybranaKategoria;
+
+    [ObservableProperty]
+    ObservableCollection<PrzedmiotUI> przedmioty;
+
+    [ObservableProperty]
+    ObservableCollection<KategoriaUI> kategorie;
+    #endregion props
+
+    void UpdateButtonStates()
+    {
+        ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
+        ButtonMode = (EditMode) ? "Zatwierdź edycję" : "Dodaj";
+    }
+    void ResetFields()
+    {
+        PrzedmiotUI przedmiot = new(0, "");
+        KategoriaUI kategoria = new(0, "");
+        ObservableCollection<OdpowiedzUI> odpowiedzi = new() { new OdpowiedzUI(0, "", false, 0) };
+
+        Pytanie = new PytanieUI(0, "", 5, false);
+        WybranyPrzedmiot = przedmiot;
+        WybranaKategoria = kategoria;
+        Odpowiedzi = odpowiedzi;
+
+        RefreshCorrectnessIcons();
+    }
+
+    public async Task LoadSubjectsNCategories()
+    {
+        przedmiotyDto = await _dbContext.Przedmioty.ToListAsync();
+        Przedmioty = new ObservableCollection<PrzedmiotUI>(
+            _mapper.Map<List<PrzedmiotUI>>(przedmiotyDto));
+
+        kategorieDto = await _dbContext.Kategorie.ToListAsync();
+        Kategorie = new ObservableCollection<KategoriaUI>(
+            _mapper.Map<List<KategoriaUI>>(kategorieDto));
+    }
+
+
+    [RelayCommand]
+    void AddAnswer()
+    {
+        Odpowiedzi.Add(new OdpowiedzUI(0, "", false, 0));
+        RefreshCorrectnessIcons();
+    }
+    [RelayCommand]
+    void RemoveAnswer(OdpowiedzUI answer)
+    {
+        if (!Odpowiedzi.Contains(answer))
+            return;
+        Odpowiedzi.Remove(answer);
+    }
+    [RelayCommand]
+    void ClearAll()
+    {
+        ResetFields();
+    }
+
+    [RelayCommand]
+    void SwitchCorrectness(OdpowiedzUI answer)
+    {
+        if (!Odpowiedzi.Contains(answer))
+            return;
+        answer.CorrectnessIcon = (answer.CzyPoprawna) ? "is_incorrect.png" : "is_correct.png";
+        answer.CzyPoprawna = !answer.CzyPoprawna;
+    }
+    void RefreshCorrectnessIcons()
+    {
+        foreach (var answer in Odpowiedzi)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            answer.CorrectnessIcon = (answer.CzyPoprawna) ? "is_correct.png" : "is_incorrect.png";
+        }
+    }
 
-            UpdateButtonStates();
+    bool SwitchEditMode()
+    {
+        EditMode = !EditMode;
+        UpdateButtonStates();
+
+        return EditMode;
+    }
+
+    [RelayCommand]
+    async Task TapGetFromDb()
+    {
+        if(SwitchEditMode())
+        {
+            RegisterQuestionMessage();
+            await Shell.Current.GoToAsync(nameof(SearchPage));
+        }
+        else
+        {
             ResetFields();
         }
+    }
 
-        #region props
-        List<Przedmiot> przedmiotyDto;
-        List<Kategoria> kategorieDto;
-        //PytanieSearchEntryUI fullPytanie;
+    [RelayCommand]
+    async Task Confirm()
+    {   
+        if (EditMode) await EditQuestionFromDb();
+        else await AddQuestionToDb();
+    }
 
-        [ObservableProperty]
-        bool editMode;
+    async Task EditQuestionFromDb()
+    {
+        //Pytanie pytanieToEdit = SetupQuestion();
+        //await _dbContext.Pytania.Add(pytanieToEdit);
+        //ResetFields();
+        //await _dbContext.SaveChangesAsync();
+    }
 
-        [ObservableProperty]
-        string buttonMode;
+    async Task AddQuestionToDb()
+    {
+        Pytanie pytanieToAdd = SetupQuestion();
+        await _dbContext.Pytania.AddAsync(pytanieToAdd);
+        ResetFields();
+        await _dbContext.SaveChangesAsync();
 
-        [ObservableProperty]
-        ImageSource buttonImageGetFromDb;
+        await AppShell.Current.DisplayAlert("Dodano pytanie", "Pytanie zostało dodane do bazy danych.", "OK");
+    }
 
-        [ObservableProperty]
-        PytanieUI pytanie;
-
-        [ObservableProperty]
-        ObservableCollection<OdpowiedzUI> odpowiedzi;
-
-        [ObservableProperty]
-        PrzedmiotUI wybranyPrzedmiot;
-
-        [ObservableProperty]
-        KategoriaUI wybranaKategoria;
-
-        [ObservableProperty]
-        ObservableCollection<PrzedmiotUI> przedmioty;
-
-        [ObservableProperty]
-        ObservableCollection<KategoriaUI> kategorie;
-        #endregion props
-
-        void UpdateButtonStates()
+    Pytanie SetupQuestion()
+    {
+        Pytanie pytanie = _mapper.Map<Pytanie>(Pytanie);
+        pytanie.Odpowiedzi = _mapper.Map<List<Odpowiedz>>(Odpowiedzi.ToList());
+        pytanie.PrzynaleznoscPytanNavigation = new List<PrzynaleznoscPytania>
         {
-            ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
-            ButtonMode = (EditMode) ? "Zatwierdź edycję" : "Dodaj";
-        }
-        void ResetFields()
-        {
-            PrzedmiotUI przedmiot = new(0, "");
-            KategoriaUI kategoria = new(0, "");
-            ObservableCollection<OdpowiedzUI> odpowiedzi = new() { new OdpowiedzUI(0, "", false, 0) };
-
-            Pytanie = new PytanieUI(0, "", 5, false);
-            WybranyPrzedmiot = przedmiot;
-            WybranaKategoria = kategoria;
-            Odpowiedzi = odpowiedzi;
-
-            //fullPytanie = new PytanieSearchEntryUI(Pytanie, WybranyPrzedmiot, WybranaKategoria, Odpowiedzi.ToList());
-        }
-
-        public async Task LoadSubjectsNCategories()
-        {
-            przedmiotyDto = await _dbContext.Przedmioty.ToListAsync();
-            Przedmioty = new ObservableCollection<PrzedmiotUI>(
-                _mapper.Map<List<PrzedmiotUI>>(przedmiotyDto));
-
-            kategorieDto = await _dbContext.Kategorie.ToListAsync();
-            Kategorie = new ObservableCollection<KategoriaUI>(
-                _mapper.Map<List<KategoriaUI>>(kategorieDto));
-        }
-
-
-        [RelayCommand]
-        void AddAnswer()
-        {
-            Odpowiedzi.Add(new OdpowiedzUI(0, "", false, 0));
-        }
-        [RelayCommand]
-        void RemoveAnswer(OdpowiedzUI answer)
-        {
-            if (!Odpowiedzi.Contains(answer))
-                return;
-            Odpowiedzi.Remove(answer);
-        }
-        [RelayCommand]
-        void ClearAll()
-        {
-            ResetFields();
-        }
-
-        bool SwitchEditMode()
-        {
-            EditMode = !EditMode;
-            UpdateButtonStates();
-
-            return EditMode;
-        }
-
-        [RelayCommand]
-        async Task TapGetFromDb()
-        {
-            if(SwitchEditMode())
+            new PrzynaleznoscPytania
             {
-                RegisterQuestionMessage();
-                await Shell.Current.GoToAsync(nameof(SearchPage));
+                IdKategorii = WybranaKategoria.Id,
+                IdPrzedmiotu = WybranyPrzedmiot.Id
             }
-            else
-            {
-                ResetFields();
-            }
-        }
+        };
+       
+        return pytanie;
+    }
 
-        [RelayCommand]
-        async Task Confirm()
-        {   
-            if (EditMode) EditQuestionFromDb();
-            else await AddQuestionToDb();
-        }
-
-        private void EditQuestionFromDb()
+    void RegisterQuestionMessage()
+    {
+        WeakReferenceMessenger.Default.Unregister<GetQuestionMessage>(this);
+        WeakReferenceMessenger.Default.Register<GetQuestionMessage>(this, (r, m) =>
         {
-            throw new NotImplementedException();
-        }
+            MainThread.BeginInvokeOnMainThread(() => {
+                PytanieSearchEntryUI received = m.Value;
 
-        async Task AddQuestionToDb()
-        {
-            Pytanie pytanieToAdd = SetupQuestion();
-            await _dbContext.Pytania.AddAsync(pytanieToAdd);
-            ResetFields();
-            await _dbContext.SaveChangesAsync();
+                Pytanie = new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania);
 
-            await AppShell.Current.DisplayAlert("Dodano pytanie", "Pytanie zostało dodane do bazy danych.", "OK");
-        }
+                // TODO: maybe its enough to select from existing ones, eh?
+                WybranyPrzedmiot = new PrzedmiotUI(received.przedmiot.Id, received.przedmiot.Nazwa);
 
-        Pytanie SetupQuestion()
-        {
-            Pytanie pytanie = _mapper.Map<Pytanie>(Pytanie);
-            pytanie.Odpowiedzi = _mapper.Map<List<Odpowiedz>>(Odpowiedzi.ToList());
-            pytanie.PrzynaleznoscPytanNavigation = new List<PrzynaleznoscPytania>
-            {
-                new PrzynaleznoscPytania
-                {
-                    IdKategorii = WybranaKategoria.Id,
-                    IdPrzedmiotu = WybranyPrzedmiot.Id
-                }
-            };
-           
-            return pytanie;
-        }
+                WybranaKategoria = new KategoriaUI(received.kategoria.Id, received.kategoria.Nazwa);
 
-        void RegisterQuestionMessage()
-        {
-            WeakReferenceMessenger.Default.Unregister<GetQuestionMessage>(this);
-            WeakReferenceMessenger.Default.Register<GetQuestionMessage>(this, (r, m) =>
-            {
-                MainThread.BeginInvokeOnMainThread(() => {
-                    PytanieSearchEntryUI received = m.Value;
+                Odpowiedzi = new ObservableCollection<OdpowiedzUI>(received.odpowiedzi);
 
-                    Pytanie = new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania);
-
-                    WybranyPrzedmiot = new PrzedmiotUI(received.przedmiot.Id, received.przedmiot.Nazwa);
-
-                    WybranaKategoria = new KategoriaUI(received.kategoria.Id, received.kategoria.Nazwa);
-
-                    Odpowiedzi = new ObservableCollection<OdpowiedzUI>(received.odpowiedzi);
-
-                    if (Pytanie.Id == 0)
-                        SwitchEditMode();
-                }); 
-            });
-        }
+                RefreshCorrectnessIcons();
+                if (Pytanie.Id == 0)
+                    SwitchEditMode();
+            }); 
+        });
     }
 }
