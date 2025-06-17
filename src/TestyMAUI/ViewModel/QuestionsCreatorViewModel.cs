@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.Collections.ObjectModel;
 using TestyLogic.Models;
 using TestyMAUI.Messages;
@@ -118,11 +117,6 @@ namespace TestyMAUI.ViewModel
         [RelayCommand]
         async Task TapGetFromDb()
         {
-            // only if there's data. If there is no data, then immediately change to db icon, so user
-            // can interact after cancelling
-
-            // if returned data null, then immediately db icon, edit mode off
-
             if(SwitchEditMode())
             {
                 RegisterQuestionMessage();
@@ -138,9 +132,7 @@ namespace TestyMAUI.ViewModel
         async Task Confirm()
         {   
             if (EditMode) EditQuestionFromDb();
-            else AddQuestionToDb();
-
-            SwitchEditMode();
+            else await AddQuestionToDb();
         }
 
         private void EditQuestionFromDb()
@@ -148,11 +140,14 @@ namespace TestyMAUI.ViewModel
             throw new NotImplementedException();
         }
 
-        async void AddQuestionToDb()
+        async Task AddQuestionToDb()
         {
             Pytanie pytanieToAdd = SetupQuestion();
             await _dbContext.Pytania.AddAsync(pytanieToAdd);
+            ResetFields();
             await _dbContext.SaveChangesAsync();
+
+            await AppShell.Current.DisplayAlert("Dodano pytanie", "Pytanie zostało dodane do bazy danych.", "OK");
         }
 
         Pytanie SetupQuestion()
@@ -167,8 +162,7 @@ namespace TestyMAUI.ViewModel
                     IdPrzedmiotu = WybranyPrzedmiot.Id
                 }
             };
-            
-
+           
             return pytanie;
         }
 
