@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.Collections.ObjectModel;
 using TestyLogic.Models;
 using TestyMAUI.Messages;
@@ -20,9 +21,7 @@ namespace TestyMAUI.ViewModel
             _dbContext = dbContext;
             _mapper = mapper;
 
-            ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
-            ButtonMode = (EditMode) ? "Edytuj" : "Zatwierdź";
-
+            UpdateButtonStates();
             ResetFields();
         }
 
@@ -59,7 +58,12 @@ namespace TestyMAUI.ViewModel
         ObservableCollection<KategoriaUI> kategorie;
         #endregion props
 
-        public void ResetFields()
+        void UpdateButtonStates()
+        {
+            ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
+            ButtonMode = (EditMode) ? "Zatwierdź edycję" : "Dodaj";
+        }
+        void ResetFields()
         {
             PrzedmiotUI przedmiot = new(0, "");
             KategoriaUI kategoria = new(0, "");
@@ -85,7 +89,6 @@ namespace TestyMAUI.ViewModel
         }
 
 
-
         [RelayCommand]
         void AddAnswer()
         {
@@ -107,13 +110,13 @@ namespace TestyMAUI.ViewModel
         bool SwitchEditMode()
         {
             EditMode = !EditMode;
-            ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
+            UpdateButtonStates();
 
             return EditMode;
         }
 
         [RelayCommand]
-        async Task TapSearch()
+        async Task TapGetFromDb()
         {
             // only if there's data. If there is no data, then immediately change to db icon, so user
             // can interact after cancelling
@@ -131,21 +134,63 @@ namespace TestyMAUI.ViewModel
             }
         }
 
-        private void RegisterQuestionMessage()
+        [RelayCommand]
+        async Task Confirm()
+        {   
+            if (EditMode) EditQuestionFromDb();
+            else AddQuestionToDb();
+
+            SwitchEditMode();
+        }
+
+        private void EditQuestionFromDb()
+        {
+            throw new NotImplementedException();
+        }
+
+        async void AddQuestionToDb()
+        {
+            Pytanie pytanieToAdd = SetupQuestion();
+            foreach (var odp in pytanieToAdd.Odpowiedzi)
+                _dbContext.Entry(odp).State = EntityState.Added;
+            foreach (var przyn in pytanieToAdd.PrzynaleznoscPytanNavigation)
+                _dbContext.Entry(przyn).State = EntityState.Added;
+            _dbContext.Entry(pytanieToAdd).State = EntityState.Added;
+            await _dbContext.SaveChangesAsync();
+        }
+
+        Pytanie SetupQuestion()
+        {
+            Pytanie pytanie = _mapper.Map<Pytanie>(Pytanie);
+            pytanie.Odpowiedzi = _mapper.Map<List<Odpowiedz>>(Odpowiedzi.ToList());
+            pytanie.PrzynaleznoscPytanNavigation = new List<PrzynaleznoscPytania>
+            {
+                new PrzynaleznoscPytania
+                {
+                    IdKategorii = WybranaKategoria.Id,
+                    IdPrzedmiotu = WybranyPrzedmiot.Id
+                }
+            };
+            
+
+            return pytanie;
+        }
+
+        void RegisterQuestionMessage()
         {
             WeakReferenceMessenger.Default.Unregister<GetQuestionMessage>(this);
             WeakReferenceMessenger.Default.Register<GetQuestionMessage>(this, (r, m) =>
             {
                 MainThread.BeginInvokeOnMainThread(() => {
-                    PytanieSearchEntryUI test = m.Value;
+                    PytanieSearchEntryUI received = m.Value;
 
-                    Pytanie = new PytanieUI(test.pytanie.Id, test.pytanie.Tresc, test.pytanie.Punkty, test.pytanie.TypPytania);
+                    Pytanie = new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania);
 
-                    WybranyPrzedmiot = new PrzedmiotUI(test.przedmiot.Id, test.przedmiot.Nazwa);
+                    WybranyPrzedmiot = new PrzedmiotUI(received.przedmiot.Id, received.przedmiot.Nazwa);
 
-                    WybranaKategoria = new KategoriaUI(test.kategoria.Id, test.kategoria.Nazwa);
+                    WybranaKategoria = new KategoriaUI(received.kategoria.Id, received.kategoria.Nazwa);
 
-                    Odpowiedzi = new ObservableCollection<OdpowiedzUI>(test.odpowiedzi);
+                    Odpowiedzi = new ObservableCollection<OdpowiedzUI>(received.odpowiedzi);
 
                     if (Pytanie.Id == 0)
                         SwitchEditMode();

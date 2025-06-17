@@ -29,7 +29,7 @@ public partial class TestyDBContext : DbContext
 
     public virtual DbSet<Zestaw> Zestawy { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { optionsBuilder.EnableSensitiveDataLogging(); }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

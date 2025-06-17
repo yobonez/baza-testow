@@ -46,7 +46,7 @@
         <Editor Grid.Row="1" Grid.Column="1" Text="{Binding Pytanie.Tresc}"></Editor>
 
         <ImageButton Grid.Row="1" Command="{Binding ClearAllCommand}" Grid.Column="2" MaximumHeightRequest="50" Source="clear.png"></ImageButton>
-        <ImageButton Grid.Row="1" Command="{Binding TapSearchCommand}" Grid.Column="3" MaximumHeightRequest="50" Source="{Binding ButtonImageGetFromDb}" Clicked="GetFromDb_Clicked"></ImageButton>
+        <ImageButton Grid.Row="1" Command="{Binding TapGetFromDbCommand}" Grid.Column="3" MaximumHeightRequest="50" Source="{Binding ButtonImageGetFromDb}" Clicked="GetFromDb_Clicked"></ImageButton>
 
         <CollectionView Grid.Row="2"  Grid.ColumnSpan="4" ItemsSource="{Binding Odpowiedzi}">
             <CollectionView.ItemTemplate>
@@ -79,7 +79,7 @@
                 Grid.ColumnSpan="2" 
                 VerticalOptions="End" 
                 Text="{Binding ButtonMode}"
+                Command="{Binding ConfirmCommand}"
                 ></Button>
-        <!--Command=""-->
     </Grid>
 </ContentPage>
