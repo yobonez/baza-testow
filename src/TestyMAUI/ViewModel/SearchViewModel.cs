@@ -96,7 +96,7 @@ namespace TestyMAUI.ViewModel
         async Task TapConfirm()
         {
             PytanieSearchEntryUI toSend = (from fullpyt in fullPytania
-                                           where fullpyt.pytanie.IdPytania == WybranePytanie.IdPytania
+                                           where fullpyt.pytanie.Id == WybranePytanie.Id
                                            select fullpyt).Single();
             WeakReferenceMessenger.Default.Send<GetQuestionMessage>(new GetQuestionMessage(toSend));
             await GoBack();

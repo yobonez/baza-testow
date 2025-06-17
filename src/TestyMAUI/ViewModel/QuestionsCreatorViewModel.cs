@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AutoMapper;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,12 @@ namespace TestyMAUI.ViewModel
     public partial class QuestionsCreatorViewModel : ObservableObject
     {
         private readonly TestyDBContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public QuestionsCreatorViewModel(TestyDBContext dbContext) 
+        public QuestionsCreatorViewModel(TestyDBContext dbContext, IMapper mapper) 
         {
             _dbContext = dbContext;
+            _mapper = mapper;
 
             ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
             ButtonMode = (EditMode) ? "Edytuj" : "Zatwierdź";
@@ -72,24 +75,16 @@ namespace TestyMAUI.ViewModel
 
         public async Task LoadSubjectsNCategories()
         {
-            // równoległe taski, Task.WhenAll
             przedmiotyDto = await _dbContext.Przedmioty.ToListAsync();
-            Przedmioty = new ObservableCollection<PrzedmiotUI> (przedmiotyDto.Select(
-                el => new PrzedmiotUI() {
-                    IdPrzedmiotu = el.IdPrzedmiotu, Nazwa = el.Nazwa 
-                }
-            ));
+            Przedmioty = new ObservableCollection<PrzedmiotUI>(
+                _mapper.Map<List<PrzedmiotUI>>(przedmiotyDto));
 
             kategorieDto = await _dbContext.Kategorie.ToListAsync();
-            Kategorie = new ObservableCollection<KategoriaUI>(kategorieDto.Select(
-                el => new KategoriaUI()
-                {
-                    IdKategorii = el.IdKategorii, Nazwa = el.Nazwa
-                }
-            ));
-            // TODO: IModel zrobić var przedmiotydto i potem as cośtam
-            // TODO: mappera używać
+            Kategorie = new ObservableCollection<KategoriaUI>(
+                _mapper.Map<List<KategoriaUI>>(kategorieDto));
         }
+
+
 
         [RelayCommand]
         void AddAnswer()
@@ -144,15 +139,15 @@ namespace TestyMAUI.ViewModel
                 MainThread.BeginInvokeOnMainThread(() => {
                     PytanieSearchEntryUI test = m.Value;
 
-                    Pytanie = new PytanieUI(test.pytanie.IdPytania, test.pytanie.Tresc, test.pytanie.Punkty, test.pytanie.TypPytania);
+                    Pytanie = new PytanieUI(test.pytanie.Id, test.pytanie.Tresc, test.pytanie.Punkty, test.pytanie.TypPytania);
 
-                    WybranyPrzedmiot = new PrzedmiotUI(test.przedmiot.IdPrzedmiotu, test.przedmiot.Nazwa);
+                    WybranyPrzedmiot = new PrzedmiotUI(test.przedmiot.Id, test.przedmiot.Nazwa);
 
-                    WybranaKategoria = new KategoriaUI(test.kategoria.IdKategorii, test.kategoria.Nazwa);
+                    WybranaKategoria = new KategoriaUI(test.kategoria.Id, test.kategoria.Nazwa);
 
                     Odpowiedzi = new ObservableCollection<OdpowiedzUI>(test.odpowiedzi);
 
-                    if (Pytanie.IdPytania == 0)
+                    if (Pytanie.Id == 0)
                         SwitchEditMode();
                 }); 
             });

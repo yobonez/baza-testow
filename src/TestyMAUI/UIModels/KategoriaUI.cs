@@ -5,11 +5,11 @@ public class KategoriaUI : IEquatable<KategoriaUI>
     public KategoriaUI() { }
     public KategoriaUI(int idKategorii, string nazwa)
     {
-        IdKategorii = idKategorii;
+        Id = idKategorii;
         Nazwa = nazwa;
     }
 
-    public int IdKategorii { get; set; }
+    public int Id { get; set; }
 
     public string Nazwa { get; set; } = null!;
 

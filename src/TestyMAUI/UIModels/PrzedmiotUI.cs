@@ -3,20 +3,15 @@
 public class PrzedmiotUI : IEquatable<PrzedmiotUI>
 {
     public PrzedmiotUI () { }
-    public PrzedmiotUI(PrzedmiotUI initializer)
-    {
-        this.IdPrzedmiotu = initializer.IdPrzedmiotu;
-        this.Nazwa = initializer.Nazwa;
-    }
     public PrzedmiotUI(int idPrzedmiotu, string nazwa)
     {
+        Id = idPrzedmiotu;
         Nazwa = nazwa;
-        IdPrzedmiotu = idPrzedmiotu;
     }
 
-    public string Nazwa { get; set; } = null!;
+    public int Id { get; set; }
 
-    public int IdPrzedmiotu { get; set; }
+    public string Nazwa { get; set; } = null!;
 
     public bool Equals(PrzedmiotUI? other) => other is not null && Nazwa.Equals(other.Nazwa);
 }

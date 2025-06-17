@@ -5,13 +5,13 @@ public class OdpowiedzUI
     public OdpowiedzUI() { }
     public OdpowiedzUI(int idOdpowiedzi, string tresc, bool czyPoprawna, int idPytania)
     {
-        IdOdpowiedzi = idOdpowiedzi;
+        Id = idOdpowiedzi;
         Tresc = tresc;
         CzyPoprawna = czyPoprawna;
         IdPytania = idPytania;
     }
 
-    public int IdOdpowiedzi { get; set; }
+    public int Id { get; set; }
 
     public string Tresc { get; set; } = null!;
 

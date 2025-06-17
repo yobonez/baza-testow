@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using TestyMAUI.Mapper;
 using TestyMAUI.Services;
 
 namespace TestyMAUI
@@ -19,7 +20,7 @@ namespace TestyMAUI
             builder.Services.AddPages();
             builder.Services.AddViewModels();
             builder.Services.AddDb(builder.Configuration);
-
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

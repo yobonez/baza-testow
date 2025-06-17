@@ -5,13 +5,13 @@ public class PytanieUI
     public PytanieUI() { }
     public PytanieUI(int id, string tresc, short pkt, bool typ)
     {
-        IdPytania = id;
+        Id = id;
         Tresc = tresc;
         Punkty = pkt;
         TypPytania = typ;
     }
 
-    public int IdPytania { get; set; }
+    public int Id { get; set; }
 
     public string Tresc { get; set; } = null!;
 

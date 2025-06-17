@@ -8,13 +8,13 @@ public class ZestawUI
 
     public ZestawUI(int idZestawu, string nazwa, DateTime dataUtworzenia, int idPrzedmiotu)
     {
-        IdZestawu = idZestawu;
+        Id = idZestawu;
         Nazwa = nazwa;
         DataUtworzenia = dataUtworzenia;
         IdPrzedmiotu = idPrzedmiotu;
     }
 
-    public int IdZestawu { get; set; }
+    public int Id { get; set; }
 
     public string Nazwa { get; set; } = null!;
 
