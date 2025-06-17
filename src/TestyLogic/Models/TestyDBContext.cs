@@ -33,11 +33,16 @@ public partial class TestyDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
         modelBuilder.Entity<Kategoria>(entity =>
         {
             entity.HasKey(e => e.IdKategorii);
 
-            entity.ToTable("KATEGORIE");
+            entity.ToTable("KATEGORIE", tb =>
+            {
+                tb.HasTrigger("sprawdz_dodawanie_kategorii_k");
+                tb.HasTrigger("sprawdz_usuwanie_kategorii_k");
+            });
 
             entity.HasIndex(e => e.Nazwa, "INDEX_KATEGORIE_NAZWA");
 
@@ -52,7 +57,7 @@ public partial class TestyDBContext : DbContext
         {
             entity.HasKey(e => e.IdOdpowiedzi);
 
-            entity.ToTable("ODPOWIEDZI");
+            entity.ToTable("ODPOWIEDZI", tb => tb.HasTrigger("sprawdz_pytanie_istnieje_o"));
 
             entity.HasIndex(e => e.IdPytania, "INDEX_ODPOWIEDZI_PYTANIA");
 
@@ -66,15 +71,35 @@ public partial class TestyDBContext : DbContext
 
             entity.HasOne(d => d.IdPytaniaNavigation).WithMany(p => p.Odpowiedzi)
                 .HasForeignKey(d => d.IdPytania)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ODPOWIEDZI_PYTANIA");
+        });
+
+        modelBuilder.Entity<OdpowiedziNaPytaniaBezPoprawnosci>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("ODPOWIEDZI_NA_PYTANIA_BEZ_POPRAWNOSCI");
+
+            entity.Property(e => e.IdOdpowiedzi).HasColumnName("idOdpowiedzi");
+            entity.Property(e => e.IdPytania).HasColumnName("idPytania");
+            entity.Property(e => e.Odpowiedz)
+                .HasMaxLength(2048)
+                .IsUnicode(false);
+            entity.Property(e => e.Punkty).HasColumnName("punkty");
+            entity.Property(e => e.Pytanie)
+                .HasMaxLength(2048)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Przedmiot>(entity =>
         {
-            entity.HasKey(e => e.IdPrzedmiotu).HasName("PK__PRZEDMIO__EED8D5BBB609886C");
+            entity.HasKey(e => e.IdPrzedmiotu).HasName("PK__PRZEDMIO__EED8D5BB4846763D");
 
-            entity.ToTable("PRZEDMIOTY");
+            entity.ToTable("PRZEDMIOTY", tb =>
+            {
+                tb.HasTrigger("sprawdz_dodawanie_przedmiotu_k");
+                tb.HasTrigger("sprawdz_usuwanie_przedmiotu_prz");
+            });
 
             entity.HasIndex(e => e.Nazwa, "INDEX_PRZEDMIOTY_NAZWA");
 
@@ -109,7 +134,6 @@ public partial class TestyDBContext : DbContext
 
             entity.HasOne(d => d.IdPytaniaNavigation).WithMany(p => p.PrzynaleznoscPytanNavigation)
                 .HasForeignKey(d => d.IdPytania)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PRZYNALEZNOSC_PYTANIA");
         });
 
@@ -117,7 +141,11 @@ public partial class TestyDBContext : DbContext
         {
             entity.HasKey(e => e.IdPytania);
 
-            entity.ToTable("PYTANIA_OTWARTE");
+            entity.ToTable("PYTANIA_OTWARTE", tb =>
+            {
+                tb.HasTrigger("sprawdz_pytanie_istnieje_po");
+                tb.HasTrigger("usun_wskazowka_po");
+            });
 
             entity.Property(e => e.IdPytania)
                 .ValueGeneratedNever()
@@ -149,12 +177,10 @@ public partial class TestyDBContext : DbContext
 
             entity.HasOne(d => d.IdPytaniaNavigation).WithMany(p => p.PytaniaWZestawachNavigation)
                 .HasForeignKey(d => d.IdPytania)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PWZ_PYTANIA");
 
             entity.HasOne(d => d.IdZestawuNavigation).WithMany(p => p.PytaniaWZestawachNavigation)
                 .HasForeignKey(d => d.IdZestawu)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PWZ_ZESTAWY");
         });
 
@@ -162,7 +188,11 @@ public partial class TestyDBContext : DbContext
         {
             entity.HasKey(e => e.IdPytania);
 
-            entity.ToTable("PYTANIA");
+            entity.ToTable("PYTANIA", tb =>
+            {
+                tb.HasTrigger("sprawdz_istnienie_otwartego_pytania_p");
+                tb.HasTrigger("usun_pozostalosci_p");
+            });
 
             entity.Property(e => e.IdPytania).HasColumnName("idPytania");
             entity.Property(e => e.Punkty).HasColumnName("punkty");
@@ -177,7 +207,11 @@ public partial class TestyDBContext : DbContext
         {
             entity.HasKey(e => e.IdZestawu);
 
-            entity.ToTable("ZESTAWY");
+            entity.ToTable("ZESTAWY", tb =>
+            {
+                tb.HasTrigger("sprawdz_data_edytowana_z");
+                tb.HasTrigger("sprawdz_dodawanie_zestawu");
+            });
 
             entity.HasIndex(e => new { e.Nazwa, e.DataUtworzenia }, "INDEX_ZESTAWY_NAZWA_DATAUTW");
 
@@ -186,6 +220,7 @@ public partial class TestyDBContext : DbContext
             entity.Property(e => e.IdZestawu).HasColumnName("idZestawu");
             entity.Property(e => e.DataUtworzenia)
                 .HasPrecision(0)
+                .HasDefaultValueSql("(getdate())")
                 .HasColumnName("dataUtworzenia");
             entity.Property(e => e.IdPrzedmiotu).HasColumnName("idPrzedmiotu");
             entity.Property(e => e.Nazwa)
