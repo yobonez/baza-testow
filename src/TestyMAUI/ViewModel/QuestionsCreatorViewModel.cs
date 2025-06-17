@@ -151,11 +151,7 @@ namespace TestyMAUI.ViewModel
         async void AddQuestionToDb()
         {
             Pytanie pytanieToAdd = SetupQuestion();
-            foreach (var odp in pytanieToAdd.Odpowiedzi)
-                _dbContext.Entry(odp).State = EntityState.Added;
-            foreach (var przyn in pytanieToAdd.PrzynaleznoscPytanNavigation)
-                _dbContext.Entry(przyn).State = EntityState.Added;
-            _dbContext.Entry(pytanieToAdd).State = EntityState.Added;
+            await _dbContext.Pytania.AddAsync(pytanieToAdd);
             await _dbContext.SaveChangesAsync();
         }
 
