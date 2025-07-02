@@ -74,6 +74,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         Odpowiedzi = odpowiedzi;
 
         RefreshCorrectnessIcons();
+        UpdateButtonStates();
     }
 
     public async Task LoadSubjectsNCategories()
@@ -154,10 +155,15 @@ public partial class QuestionsCreatorViewModel : ObservableObject
 
     async Task EditQuestionFromDb()
     {
-        //Pytanie pytanieToEdit = SetupQuestion();
-        //await _dbContext.Pytania.Add(pytanieToEdit);
-        //ResetFields();
-        //await _dbContext.SaveChangesAsync();
+        Pytanie pytanieToAdd = SetupQuestion();
+        _dbContext.Pytania.Update(pytanieToAdd);
+        _dbContext.SaveChanges();
+
+        _dbContext.Entry(pytanieToAdd).State = EntityState.Detached; // edit the same thing more than once
+
+        ResetFields();
+        SwitchEditMode();
+        await AppShell.Current.DisplayAlert("Edycja pytania", "Pomyślnie edytowano pytanie.", "OK");
     }
 
     async Task AddQuestionToDb()
@@ -167,22 +173,25 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         ResetFields();
         await _dbContext.SaveChangesAsync();
 
-        await AppShell.Current.DisplayAlert("Dodano pytanie", "Pytanie zostało dodane do bazy danych.", "OK");
+        await AppShell.Current.DisplayAlert("Dodanie pytania", "Pytanie zostało dodane.", "OK");
     }
 
     Pytanie SetupQuestion()
     {
         Pytanie pytanie = _mapper.Map<Pytanie>(Pytanie);
         pytanie.Odpowiedzi = _mapper.Map<List<Odpowiedz>>(Odpowiedzi.ToList());
-        pytanie.PrzynaleznoscPytanNavigation = new List<PrzynaleznoscPytania>
+
+        if (!EditMode)
         {
-            new PrzynaleznoscPytania
+            pytanie.PrzynaleznoscPytanNavigation = new List<PrzynaleznoscPytania>
             {
-                IdKategorii = WybranaKategoria.Id,
-                IdPrzedmiotu = WybranyPrzedmiot.Id
-            }
-        };
-       
+                new PrzynaleznoscPytania
+                {
+                    IdKategorii = WybranaKategoria.Id,
+                    IdPrzedmiotu = WybranyPrzedmiot.Id
+                }   
+            };
+        }
         return pytanie;
     }
 

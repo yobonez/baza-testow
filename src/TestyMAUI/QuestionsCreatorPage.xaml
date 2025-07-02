@@ -63,7 +63,7 @@
                             <ColumnDefinition Width="50"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <Label Text="Odpowiedź n" VerticalOptions="Center"></Label>
+                        <Label Text="Odpowiedź 1" VerticalOptions="Center"></Label>
                         <Entry Grid.Column="1" Text="{Binding Tresc}"></Entry>
                         <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:QuestionsCreatorViewModel}}, Path=AddAnswerCommand}"
                                      Source="add_item.png"  Grid.Column="2" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>

@@ -39,7 +39,7 @@
         </dg:DataGrid>
 
         <Button Grid.Row="2" Command="{Binding TapConfirmCommand}" MaximumHeightRequest="50" MaximumWidthRequest="50"
-                VerticalOptions="Center" HorizontalOptions="Center"></Button>
+                VerticalOptions="Center" HorizontalOptions="Center" Text="OK"></Button>
 
     </Grid>
 </ContentPage>
