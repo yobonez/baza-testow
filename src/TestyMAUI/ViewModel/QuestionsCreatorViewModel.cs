@@ -75,6 +75,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
 
         RefreshCorrectnessIcons();
         UpdateButtonStates();
+        RefreshAnswersIndexes();
     }
 
     public async Task LoadSubjectsNCategories()
@@ -88,12 +89,21 @@ public partial class QuestionsCreatorViewModel : ObservableObject
             _mapper.Map<List<KategoriaUI>>(kategorieDto));
     }
 
+    private void RefreshAnswersIndexes()
+    {
+        int counter = 1;
+        foreach(OdpowiedzUI odp in Odpowiedzi) {
+            odp.Idx = "Odpowiedź " + counter;
+            counter++;
+        }
+    }
 
     [RelayCommand]
     void AddAnswer()
     {
         Odpowiedzi.Add(new OdpowiedzUI(0, "", false, 0));
         RefreshCorrectnessIcons();
+        RefreshAnswersIndexes();
     }
     [RelayCommand]
     void RemoveAnswer(OdpowiedzUI answer)
@@ -101,6 +111,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         if (!Odpowiedzi.Contains(answer))
             return;
         Odpowiedzi.Remove(answer);
+        RefreshAnswersIndexes();
     }
     [RelayCommand]
     void ClearAll()
@@ -213,6 +224,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
                 Odpowiedzi = new ObservableCollection<OdpowiedzUI>(received.odpowiedzi);
 
                 RefreshCorrectnessIcons();
+                RefreshAnswersIndexes();
                 if (Pytanie.Id == 0)
                     SwitchEditMode();
             }); 

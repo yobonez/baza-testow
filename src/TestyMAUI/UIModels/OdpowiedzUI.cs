@@ -22,4 +22,7 @@ public partial class OdpowiedzUI : ObservableObject
 
     [ObservableProperty]
     public ImageSource correctnessIcon = null!;
+
+    [ObservableProperty]
+    public string idx;
 }
