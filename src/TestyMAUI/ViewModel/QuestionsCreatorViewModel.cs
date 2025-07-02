@@ -167,11 +167,14 @@ public partial class QuestionsCreatorViewModel : ObservableObject
     async Task EditQuestionFromDb()
     {
         Pytanie pytanieToEdit = SetupQuestion();
+        Pytanie pytanieDb = _dbContext.Pytania.Single(pyt => pyt.IdPytania == pytanieToEdit.IdPytania);
+        _dbContext.Entry(pytanieDb).State = EntityState.Detached;
 
-        foreach (Odpowiedz existingOdpowiedz in _dbContext.Odpowiedzi)
+        foreach (Odpowiedz existingOdpowiedz in pytanieDb.Odpowiedzi)
         {
             _dbContext.Entry(existingOdpowiedz).State = EntityState.Detached;
-            if (!pytanieToEdit.Odpowiedzi.Any(odp => odp.IdOdpowiedzi == existingOdpowiedz.IdOdpowiedzi)) 
+            if (!pytanieToEdit.Odpowiedzi.Any(odp => odp.IdOdpowiedzi == existingOdpowiedz.IdOdpowiedzi 
+                                                    && odp.IdPytania == existingOdpowiedz.IdPytania)) 
                 _dbContext.Odpowiedzi.Remove(existingOdpowiedz);
         }
 
@@ -226,9 +229,9 @@ public partial class QuestionsCreatorViewModel : ObservableObject
                 Pytanie = new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania);
 
                 // TODO: maybe its enough to select from existing ones, eh?
-                WybranyPrzedmiot = new PrzedmiotUI(received.przedmiot.Id, received.przedmiot.Nazwa);
+                WybranyPrzedmiot = Przedmioty.Single(p => p.Id == received.przedmiot.Id);
 
-                WybranaKategoria = new KategoriaUI(received.kategoria.Id, received.kategoria.Nazwa);
+                WybranaKategoria = Kategorie.Single(k => k.Id == received.kategoria.Id);
 
                 Odpowiedzi = new ObservableCollection<OdpowiedzUI>(received.odpowiedzi);
 
