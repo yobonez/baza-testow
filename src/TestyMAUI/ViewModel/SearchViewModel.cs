@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Maui.Animations;
 using System.Collections.ObjectModel;
 using TestyLogic.Models;
 using TestyMAUI.Messages;
@@ -29,11 +30,11 @@ namespace TestyMAUI.ViewModel
             fullPytania = new List<PytanieSearchEntryUI>();
         }
 
-        public async Task LoadAllQuestions(bool forceRefresh = false)
+        public async Task LoadAllQuestions()
         {
-            if (!forceRefresh && Pytania.Count > 0)
-                return;
-
+            Pytania.Clear();
+            fullPytania.Clear();
+            _dbContext.ChangeTracker.Clear();
 
             var dbPrzedmioty = await _dbContext.Przedmioty.ToListAsync();
             var dbKategorie = await _dbContext.Kategorie.ToListAsync();
@@ -46,10 +47,13 @@ namespace TestyMAUI.ViewModel
                 .Include(el => el.Odpowiedzi)
                 .ToListAsync();
 
+
+
             dbPytania.ForEach(pyt =>
             {
-                if (pyt.TypPytania == true)
+                if (pyt.TypPytania == true) // not supporting open ones
                     return;
+
                 PytanieUI pytToAdd = new PytanieUI(pyt.IdPytania, pyt.Tresc, pyt.Punkty, pyt.TypPytania);
 
                 Kategoria kateg = (from kat in dbKategorie
@@ -84,7 +88,7 @@ namespace TestyMAUI.ViewModel
         [RelayCommand]
         async Task TapRefresh()
         {
-            await LoadAllQuestions(forceRefresh: true);
+            await LoadAllQuestions();
         }
 
         async Task GoBack()

@@ -108,7 +108,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
     [RelayCommand]
     void RemoveAnswer(OdpowiedzUI answer)
     {
-        if (!Odpowiedzi.Contains(answer))
+        if (!Odpowiedzi.Contains(answer) || Odpowiedzi.Count == 1)
             return;
         Odpowiedzi.Remove(answer);
         RefreshAnswersIndexes();
@@ -166,11 +166,18 @@ public partial class QuestionsCreatorViewModel : ObservableObject
 
     async Task EditQuestionFromDb()
     {
-        Pytanie pytanieToAdd = SetupQuestion();
-        _dbContext.Pytania.Update(pytanieToAdd);
-        _dbContext.SaveChanges();
+        Pytanie pytanieToEdit = SetupQuestion();
 
-        _dbContext.Entry(pytanieToAdd).State = EntityState.Detached; // edit the same thing more than once
+        foreach (Odpowiedz existingOdpowiedz in _dbContext.Odpowiedzi)
+        {
+            _dbContext.Entry(existingOdpowiedz).State = EntityState.Detached;
+            if (!pytanieToEdit.Odpowiedzi.Any(odp => odp.IdOdpowiedzi == existingOdpowiedz.IdOdpowiedzi)) 
+                _dbContext.Odpowiedzi.Remove(existingOdpowiedz);
+        }
+
+        _dbContext.Pytania.Update(pytanieToEdit);
+        _dbContext.SaveChanges();
+        _dbContext.Entry(pytanieToEdit).State = EntityState.Detached; // edit the same thing more than once
 
         ResetFields();
         SwitchEditMode();
@@ -183,6 +190,8 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         await _dbContext.Pytania.AddAsync(pytanieToAdd);
         ResetFields();
         await _dbContext.SaveChangesAsync();
+
+        _dbContext.Entry(pytanieToAdd).State = EntityState.Detached; // edit the same thing more than once
 
         await AppShell.Current.DisplayAlert("Dodanie pytania", "Pytanie zostało dodane.", "OK");
     }

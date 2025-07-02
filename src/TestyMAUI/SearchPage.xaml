@@ -8,37 +8,38 @@
              x:DataType="viewmodel:SearchViewModel"
              Title="SearchPage"
              Loaded="ContentPage_Loaded">
-    <Grid RowDefinitions="50, *, 50">
-        <ImageButton Command="{Binding TapRefreshCommand}" MaximumHeightRequest="50" MaximumWidthRequest="50" Source="db_refresh.png"
+    <Grid RowDefinitions="50, *, 50" ColumnDefinitions="0.15*,0.7*, 0.15*" RowSpacing="10">
+        <ImageButton Grid.Column="1" Command="{Binding TapRefreshCommand}" MaximumHeightRequest="50" MaximumWidthRequest="50" Source="db_refresh.png"
                      VerticalOptions="Center" HorizontalOptions="Center"></ImageButton>
 
-        <dg:DataGrid Grid.Row="1" ItemsSource="{Binding Pytania}" SelectionMode="Single"
+        <dg:DataGrid Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Pytania}" SelectionMode="Single"
                      SelectedItem="{Binding WybranePytanie}" RowHeight="50">
             <dg:DataGrid.NoDataView>
-                <Label HorizontalOptions="Center" VerticalOptions="Center">Brak danych. Bruh</Label>
+                <Label HorizontalOptions="Center" VerticalOptions="Center">Ładowanie...</Label>
             </dg:DataGrid.NoDataView>
             <dg:DataGrid.Columns>
                 <dg:DataGridColumn Title="Tresc" PropertyName="Tresc">
-                    <!--<dg:DataGridColumn.CellTemplate>
-                        <DataTemplate>
-                            <Label Text="{Binding}"></Label>
-                        </DataTemplate>
-                    </dg:DataGridColumn.CellTemplate>-->
-                </dg:DataGridColumn>
-                <dg:DataGridColumn Title="Typ pytania" PropertyName="TypPytania">
                 </dg:DataGridColumn>
                 <dg:DataGridColumn Title="Punkty" PropertyName="Punkty">
                 </dg:DataGridColumn>
             </dg:DataGrid.Columns>
+            <dg:DataGrid.RowsTextColorPalette>
+                <dg:PaletteCollection>
+                    <Color>#565656</Color>
+                    <Color>#ac99ea</Color>
+                </dg:PaletteCollection>
+            </dg:DataGrid.RowsTextColorPalette>
             <dg:DataGrid.RowsBackgroundColorPalette>
                 <dg:PaletteCollection>
-                    <Color>#c3c3c3</Color>
-                    <Color>#f3f3f3</Color>
+                    <Color>#ac99ea</Color>
+                    <Color>#565656</Color>
                 </dg:PaletteCollection>
             </dg:DataGrid.RowsBackgroundColorPalette>
+
+
         </dg:DataGrid>
 
-        <Button Grid.Row="2" Command="{Binding TapConfirmCommand}" MaximumHeightRequest="50" MaximumWidthRequest="50"
+        <Button Grid.Row="2" Grid.Column="1" Command="{Binding TapConfirmCommand}" MaximumHeightRequest="50" WidthRequest="100"
                 VerticalOptions="Center" HorizontalOptions="Center" Text="OK"></Button>
 
     </Grid>
