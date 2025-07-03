@@ -1,6 +1,8 @@
-﻿namespace TestyMAUI.UIModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-public class PytanieUI
+namespace TestyMAUI.UIModels;
+
+public partial class PytanieUI : ObservableObject
 {
     public PytanieUI() { }
     public PytanieUI(int id, string tresc, short pkt, bool typ)
@@ -18,4 +20,7 @@ public class PytanieUI
     public short Punkty { get; set; }
 
     public bool TypPytania { get; set; }
+
+    [ObservableProperty]
+    public string idx;
 }

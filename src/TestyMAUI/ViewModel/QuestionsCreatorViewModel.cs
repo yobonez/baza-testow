@@ -228,7 +228,6 @@ public partial class QuestionsCreatorViewModel : ObservableObject
 
                 Pytanie = new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania);
 
-                // TODO: maybe its enough to select from existing ones, eh?
                 WybranyPrzedmiot = Przedmioty.Single(p => p.Id == received.przedmiot.Id);
 
                 WybranaKategoria = Kategorie.Single(k => k.Id == received.kategoria.Id);

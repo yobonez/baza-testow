@@ -45,8 +45,8 @@
         <Label Grid.Row="1" Text="Treść pytania"></Label>
         <Editor Grid.Row="1" Grid.Column="1" Text="{Binding Pytanie.Tresc}"></Editor>
 
-        <ImageButton Grid.Row="1" Command="{Binding ClearAllCommand}" Grid.Column="2" MaximumHeightRequest="50" Source="clear.png"></ImageButton>
-        <ImageButton Grid.Row="1" Command="{Binding TapGetFromDbCommand}" Grid.Column="3" MaximumHeightRequest="50" Source="{Binding ButtonImageGetFromDb}"></ImageButton>
+        <ImageButton Grid.Row="1" Command="{Binding ClearAllCommand}" Grid.Column="2" Source="clear.png" Style="{StaticResource imgBtnStyle}"></ImageButton>
+        <ImageButton Grid.Row="1" Command="{Binding TapGetFromDbCommand}" Grid.Column="3" Source="{Binding ButtonImageGetFromDb}" Style="{StaticResource imgBtnStyle}"></ImageButton>
 
         <CollectionView Grid.Row="2"  Grid.ColumnSpan="4" ItemsSource="{Binding Odpowiedzi}">
             <CollectionView.ItemTemplate>
@@ -66,13 +66,13 @@
                         <Label Text="{Binding Idx}" VerticalOptions="Center"></Label>
                         <Entry Grid.Column="1" Text="{Binding Tresc}"></Entry>
                         <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:QuestionsCreatorViewModel}}, Path=AddAnswerCommand}"
-                                     Source="add_item.png"  Grid.Column="2" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+                                     Source="add_item.png"  Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
                         <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:QuestionsCreatorViewModel}}, Path=RemoveAnswerCommand}" 
                                      CommandParameter="{Binding .}"
-                                     Source="remove_item.png"  Grid.Column="3" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+                                     Source="remove_item.png"  Grid.Column="3" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
                         <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:QuestionsCreatorViewModel}}, Path=SwitchCorrectnessCommand}" 
                                      CommandParameter="{Binding .}"
-                                     Source="{Binding CorrectnessIcon}"  Grid.Column="4" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+                                     Source="{Binding CorrectnessIcon}"  Grid.Column="4" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

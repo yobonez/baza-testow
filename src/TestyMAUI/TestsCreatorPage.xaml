@@ -9,6 +9,7 @@
     <Grid Padding="75" RowSpacing="10" ColumnSpacing="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.1*"></RowDefinition>
+            <RowDefinition Height="0.2*"></RowDefinition>
             <RowDefinition Height="0.85*"></RowDefinition>
             <RowDefinition Height="0.15*"></RowDefinition>
         </Grid.RowDefinitions>
@@ -19,15 +20,15 @@
             <ColumnDefinition Width="50"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Label Text="Zestaw" VerticalOptions="Center"></Label>
-        <Entry Text="{Binding Zestaw.Nazwa}" Grid.Column="1"></Entry>
-        
-        <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=GetFromDBCommand}" 
+        <Label Grid.Row="1" Text="Zestaw" VerticalOptions="Center"></Label>
+        <Entry Grid.Row="1" Text="{Binding Zestaw.Nazwa}" Grid.Column="1"></Entry>
+
+        <ImageButton Grid.Row="1" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=GetFromDBCommand}" 
              CommandParameter="{Binding .}"
-             Source="get_from_db.png"  Grid.Column="2" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
-        <ImageButton Command="{Binding ClearAllCommand}" Grid.Column="3" MaximumHeightRequest="50" Source="clear.png"></ImageButton>
+             Source="get_from_db.png"  Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
+        <ImageButton Grid.Row="1" Command="{Binding ClearAllCommand}" Grid.Column="3" Source="clear.png" Style="{StaticResource imgBtnStyle}"></ImageButton>
         
-        <CollectionView Grid.Row="1" Grid.ColumnSpan="3" ItemsSource="{Binding Pytania}">
+        <CollectionView Grid.Row="2" Grid.ColumnSpan="3" ItemsSource="{Binding Pytania}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:PytanieUI">
                     <Grid Padding="5" ColumnSpacing="10">
@@ -42,16 +43,16 @@
                             <ColumnDefinition Width="50"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
-                        <Label Text="Pytanie n" VerticalOptions="Center"></Label>
-                        <Entry Grid.Column="1" Text="{Binding Tresc}"></Entry>
+                        <Label Text="{Binding Idx}" VerticalOptions="Center"></Label>
+                        <Entry IsEnabled="False" Grid.Column="1" Text="{Binding Tresc}"></Entry>
                         <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=AddQuestionCommand}"
-                                     Source="add_item.png"  Grid.Column="2" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+                                     Source="add_item.png"  Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
                         <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=RemoveQuestionCommand}" 
                                      CommandParameter="{Binding .}"
-                                     Source="remove_item.png"  Grid.Column="3" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+                                     Source="remove_item.png"  Grid.Column="3" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
                         <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=GetFromDBCommand}" 
                                      CommandParameter="{Binding .}"
-                                     Source="get_from_db.png"  Grid.Column="4" MaximumHeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center"></ImageButton>
+                                     Source="get_from_db.png"  Grid.Column="4" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

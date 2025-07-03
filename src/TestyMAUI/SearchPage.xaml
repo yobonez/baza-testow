@@ -9,8 +9,8 @@
              Title="SearchPage"
              Loaded="ContentPage_Loaded">
     <Grid RowDefinitions="50, *, 50" ColumnDefinitions="0.15*,0.7*, 0.15*" RowSpacing="10">
-        <ImageButton Grid.Column="1" Command="{Binding TapRefreshCommand}" MaximumHeightRequest="50" MaximumWidthRequest="50" Source="db_refresh.png"
-                     VerticalOptions="Center" HorizontalOptions="Center"></ImageButton>
+        <ImageButton Grid.Column="1" Command="{Binding TapRefreshCommand}" Source="db_refresh.png"
+                     VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
 
         <dg:DataGrid Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Pytania}" SelectionMode="Single"
                      SelectedItem="{Binding WybranePytanie}" RowHeight="50">
