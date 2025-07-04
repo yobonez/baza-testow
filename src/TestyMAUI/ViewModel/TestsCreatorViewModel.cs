@@ -48,7 +48,7 @@ namespace TestyMAUI.ViewModel
         async Task FetchQuestion()
         {
             RegisterQuestionMessage();
-            await Shell.Current.GoToAsync($"{nameof(SearchPage)}?isFullQuestion=False");
+            await Shell.Current.GoToAsync($"{nameof(SearchPage)}?isFullQuestion=False&subjectFilter={WybranyPrzedmiot?.Nazwa}");
         }
         [RelayCommand]
         void RemoveQuestion(PytanieUI question)

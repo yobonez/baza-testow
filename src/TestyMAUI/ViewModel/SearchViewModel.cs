@@ -30,7 +30,7 @@ namespace TestyMAUI.ViewModel
             fullPytania = new List<PytanieSearchEntryUI>();
         }
 
-        public async Task LoadAllQuestions()
+        public async Task LoadAllQuestions(string? subjectFilter = null)
         {
             Pytania.Clear();
             fullPytania.Clear();
@@ -54,6 +54,11 @@ namespace TestyMAUI.ViewModel
             {
                 if (pyt.TypPytania == true) // not supporting open ones
                     return;
+                if (subjectFilter != null 
+                    && !pyt.PrzynaleznoscPytanNavigation.Any(prz => prz.IdPrzedmiotuNavigation.Nazwa == subjectFilter))
+                {
+                    return;
+                }
 
                 PytanieUI pytToAdd = new PytanieUI(pyt.IdPytania, pyt.Tresc, pyt.Punkty, pyt.TypPytania);
 
