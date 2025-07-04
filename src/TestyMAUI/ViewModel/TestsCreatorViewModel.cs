@@ -95,6 +95,12 @@ namespace TestyMAUI.ViewModel
                 MainThread.BeginInvokeOnMainThread(() => {
                     PytanieSearchEntryUI received = m.Value;
 
+                    Pytania.Remove(Pytania.Last());
+                    if(Pytania.Any(pyt => pyt.Id == received.pytanie.Id))
+                    {
+                        AppShell.Current.DisplayAlert("Błąd", "To pytanie już istnieje w zestawie.", "OK");
+                        return;
+                    }
                     Pytania.Add(new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania));
 
                     WybranyPrzedmiot ??= Przedmioty.Single(p => p.Id == received.przedmiot.Id);

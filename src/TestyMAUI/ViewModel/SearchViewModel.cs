@@ -54,11 +54,12 @@ namespace TestyMAUI.ViewModel
             {
                 if (pyt.TypPytania == true) // not supporting open ones
                     return;
-                if (subjectFilter != null 
-                    && !pyt.PrzynaleznoscPytanNavigation.Any(prz => prz.IdPrzedmiotuNavigation.Nazwa == subjectFilter))
-                {
+
+                subjectFilter = (subjectFilter == "") ? null : subjectFilter;
+                if ((subjectFilter != null)
+                    && !pyt.PrzynaleznoscPytanNavigation
+                           .Any(prz => prz.IdPrzedmiotuNavigation.Nazwa == subjectFilter))
                     return;
-                }
 
                 PytanieUI pytToAdd = new PytanieUI(pyt.IdPytania, pyt.Tresc, pyt.Punkty, pyt.TypPytania);
 
@@ -93,8 +94,6 @@ namespace TestyMAUI.ViewModel
                 }
 
                 Pytania.Add(pytToAdd);
-
-                //_dbContext.Entry(pyt).State = EntityState.Detached;
             });
         }
 
@@ -118,7 +117,6 @@ namespace TestyMAUI.ViewModel
 
             if (!_isFullQuestion) WeakReferenceMessenger.Default.Send<GetSimpleQuestionMessage>(new GetSimpleQuestionMessage(toSend));
             else WeakReferenceMessenger.Default.Send<GetDetailedQuestionMessage>(new GetDetailedQuestionMessage(toSend));
-            //WeakReferenceMessenger.Default.Unregister<GetDetailedQuestionMessage>(this);
 
             await GoBack();
         }
