@@ -11,10 +11,10 @@ namespace TestyMAUI.UIModels
     {
         public PytanieUI pytanie;
         public PrzedmiotUI przedmiot;
-        public KategoriaUI kategoria;
-        public List<OdpowiedzUI> odpowiedzi;
+        public KategoriaUI? kategoria;
+        public List<OdpowiedzUI>? odpowiedzi;
 
-        public PytanieSearchEntryUI(PytanieUI pyt, PrzedmiotUI prz, KategoriaUI kat, List<OdpowiedzUI> odp)
+        public PytanieSearchEntryUI(PytanieUI pyt, PrzedmiotUI prz, KategoriaUI? kat = null, List<OdpowiedzUI>? odp = null)
         {
             pytanie = pyt;
             przedmiot = prz;

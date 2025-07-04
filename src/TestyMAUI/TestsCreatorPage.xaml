@@ -20,6 +20,15 @@
             <ColumnDefinition Width="50"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+        <HorizontalStackLayout Spacing="10" Grid.Column="1" Loaded="HorizontalStackLayout_Loaded">
+            <Label VerticalOptions="Center" Text="Przedmiot:"></Label>
+            <Picker x:Name="SubjectPicker" SelectedItem="{Binding WybranyPrzedmiot}" ItemsSource="{Binding Przedmioty}" >
+                <Picker.ItemDisplayBinding>
+                    <Binding Path="Nazwa"></Binding>
+                </Picker.ItemDisplayBinding>
+            </Picker>
+        </HorizontalStackLayout>
+
         <Label Grid.Row="1" Text="Zestaw" VerticalOptions="Center"></Label>
         <Entry Grid.Row="1" Text="{Binding Zestaw.Nazwa}" Grid.Column="1"></Entry>
 
@@ -50,7 +59,7 @@
                         <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=RemoveQuestionCommand}" 
                                      CommandParameter="{Binding .}"
                                      Source="remove_item.png"  Grid.Column="3" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
-                        <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=GetFromDBCommand}" 
+                        <ImageButton Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=FetchQuestionCommand}" 
                                      CommandParameter="{Binding .}"
                                      Source="get_from_db.png"  Grid.Column="4" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
                     </Grid>

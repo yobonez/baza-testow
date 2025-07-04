@@ -4,9 +4,17 @@ namespace TestyMAUI;
 
 public partial class TestsCreatorPage : ContentPage
 {
-	public TestsCreatorPage(TestsCreatorViewModel vm)
+    private TestsCreatorViewModel viewModel;
+
+    public TestsCreatorPage(TestsCreatorViewModel vm)
 	{
 		InitializeComponent();
-		BindingContext = vm;
+		viewModel = vm;
+        BindingContext = vm;
 	}
+
+    private async void HorizontalStackLayout_Loaded(object sender, EventArgs e)
+    {
+        await viewModel.LoadSubjects();
+    }
 }

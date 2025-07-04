@@ -21,7 +21,4 @@ public class ZestawUI
     public DateTime DataUtworzenia { get; set; }
 
     public int IdPrzedmiotu { get; set; }
-    public PrzedmiotUI? Przedmiot { get; set; }
-    public KategoriaUI? Kategoria { get; set; }
-    public List<PytanieUI>? Pytania { get; set; }
 }

@@ -20,7 +20,6 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         _dbContext = dbContext;
         _mapper = mapper;
 
-        UpdateButtonStates();
         ResetFields();
     }
 
@@ -114,10 +113,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         RefreshAnswersIndexes();
     }
     [RelayCommand]
-    void ClearAll()
-    {
-        ResetFields();
-    }
+    void ClearAll() => ResetFields();
 
     [RelayCommand]
     void SwitchCorrectness(OdpowiedzUI answer)
@@ -149,7 +145,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         if(SwitchEditMode())
         {
             RegisterQuestionMessage();
-            await Shell.Current.GoToAsync(nameof(SearchPage));
+            await Shell.Current.GoToAsync($"{nameof(SearchPage)}?isFullQuestion=True");
         }
         else
         {
@@ -164,23 +160,44 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         else await AddQuestionToDb();
     }
 
+    bool AnswerExistsInQuestion(Pytanie question, Odpowiedz answer)
+    {
+        return question.Odpowiedzi.Any(odp => odp.IdOdpowiedzi == answer.IdOdpowiedzi
+                                                 && odp.IdPytania == answer.IdPytania);
+    }
     async Task EditQuestionFromDb()
     {
         Pytanie pytanieToEdit = SetupQuestion();
-        Pytanie pytanieDb = _dbContext.Pytania.Single(pyt => pyt.IdPytania == pytanieToEdit.IdPytania);
-        _dbContext.Entry(pytanieDb).State = EntityState.Detached;
+        Pytanie pytanieDb = _dbContext.Pytania
+            .Include(el => el.PrzynaleznoscPytanNavigation)
+                .ThenInclude(subEl => subEl.IdPrzedmiotuNavigation)
+            .Include(el => el.PrzynaleznoscPytanNavigation)
+                .ThenInclude(subEl => subEl.IdKategoriiNavigation)
+            .Include(el => el.Odpowiedzi)
+            .AsNoTracking()
+            .Single(pyt => pyt.IdPytania == pytanieToEdit.IdPytania);
 
-        foreach (Odpowiedz existingOdpowiedz in pytanieDb.Odpowiedzi)
+        foreach (Odpowiedz ans in pytanieDb.Odpowiedzi)
         {
-            _dbContext.Entry(existingOdpowiedz).State = EntityState.Detached;
-            if (!pytanieToEdit.Odpowiedzi.Any(odp => odp.IdOdpowiedzi == existingOdpowiedz.IdOdpowiedzi 
-                                                    && odp.IdPytania == existingOdpowiedz.IdPytania)) 
-                _dbContext.Odpowiedzi.Remove(existingOdpowiedz);
+            if (!AnswerExistsInQuestion(pytanieToEdit, ans))
+                _dbContext.Entry(ans).State = EntityState.Deleted;
         }
 
-        _dbContext.Pytania.Update(pytanieToEdit);
+        pytanieDb = pytanieToEdit;
+        // ef core to enigma
+        foreach (Odpowiedz ans in pytanieToEdit.Odpowiedzi)
+        {
+            if (ans.IdOdpowiedzi == 0)
+                _dbContext.Entry(ans).State = EntityState.Added;
+            else
+                _dbContext.Entry(ans).State = EntityState.Modified;
+        }
+
+        _dbContext.Pytania.Update(pytanieDb);
+
         _dbContext.SaveChanges();
-        _dbContext.Entry(pytanieToEdit).State = EntityState.Detached; // edit the same thing more than once
+
+        _dbContext.Entry(pytanieDb).State = EntityState.Detached; // edit the same thing more than once
 
         ResetFields();
         SwitchEditMode();
@@ -220,8 +237,8 @@ public partial class QuestionsCreatorViewModel : ObservableObject
 
     void RegisterQuestionMessage()
     {
-        WeakReferenceMessenger.Default.Unregister<GetQuestionMessage>(this);
-        WeakReferenceMessenger.Default.Register<GetQuestionMessage>(this, (r, m) =>
+        WeakReferenceMessenger.Default.Unregister<GetDetailedQuestionMessage>(this);
+        WeakReferenceMessenger.Default.Register<GetDetailedQuestionMessage>(this, (r, m) =>
         {
             MainThread.BeginInvokeOnMainThread(() => {
                 PytanieSearchEntryUI received = m.Value;

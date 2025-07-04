@@ -1,11 +1,15 @@
 using TestyMAUI.ViewModel;
 
 namespace TestyMAUI;
-
-public partial class SearchPage : ContentPage
+[QueryProperty(nameof(IsFullQuestion), "isFullQuestion")]
+public partial class SearchPage : ContentPage, IQueryAttributable
 {
 	private SearchViewModel viewModel;
-	public SearchPage(SearchViewModel vm)
+
+    string IsFullQuestion { get; set; }
+
+
+    public SearchPage(SearchViewModel vm)
 	{
 		InitializeComponent();
 		viewModel = vm;
@@ -14,6 +18,14 @@ public partial class SearchPage : ContentPage
 
     private async void ContentPage_Loaded(object sender, EventArgs e)
     {
+        viewModel._isFullQuestion = bool.Parse(IsFullQuestion);
 		await viewModel.LoadAllQuestions();
+    }
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.TryGetValue("isFullQuestion", out var value)) {
+            IsFullQuestion = value as string;
+        }
     }
 }

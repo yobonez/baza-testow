@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Maui.Animations;
 using System.Collections.ObjectModel;
 using TestyLogic.Models;
 using TestyMAUI.Messages;
@@ -14,10 +13,11 @@ namespace TestyMAUI.ViewModel
     {
         private readonly TestyDBContext _dbContext;
 
+        internal bool _isFullQuestion;
+
         [ObservableProperty]
         ObservableCollection<PytanieUI> pytania;
 
-        // send back to prev ui
         [ObservableProperty]
         PytanieUI wybranePytanie;
 
@@ -34,7 +34,8 @@ namespace TestyMAUI.ViewModel
         {
             Pytania.Clear();
             fullPytania.Clear();
-            _dbContext.ChangeTracker.Clear();
+
+            _dbContext.ChangeTracker.Clear(); // avoid weird stuff happening with EF Core tracking affecting the UI
 
             var dbPrzedmioty = await _dbContext.Przedmioty.ToListAsync();
             var dbKategorie = await _dbContext.Kategorie.ToListAsync();
@@ -56,32 +57,39 @@ namespace TestyMAUI.ViewModel
 
                 PytanieUI pytToAdd = new PytanieUI(pyt.IdPytania, pyt.Tresc, pyt.Punkty, pyt.TypPytania);
 
-                Kategoria kateg = (from kat in dbKategorie
-                                   where kat.IdKategorii == (from przyn in pyt.PrzynaleznoscPytanNavigation
-                                                             where przyn.IdPytania == pyt.IdPytania
-                                                             select przyn.IdKategorii).Single()
-                                   select kat).Single();
-
                 Przedmiot przedm = (from prz in dbPrzedmioty
-                                   where prz.IdPrzedmiotu == (from przyn in pyt.PrzynaleznoscPytanNavigation
-                                                             where przyn.IdPytania == pyt.IdPytania
-                                                             select przyn.IdPrzedmiotu).Single()
-                                   select prz).Single();
-
-                List<Odpowiedz> odpow = (from odp in dbOdpowiedzi
-                                         where odp.IdPytania == pyt.IdPytania
-                                         select odp).ToList();
-
-
-                KategoriaUI katToAdd = new KategoriaUI(kateg.IdKategorii, kateg.Nazwa);
+                                    where prz.IdPrzedmiotu == (from przyn in pyt.PrzynaleznoscPytanNavigation
+                                                               where przyn.IdPytania == pyt.IdPytania
+                                                               select przyn.IdPrzedmiotu).Single()
+                                    select prz).Single();
                 PrzedmiotUI przToAdd = new PrzedmiotUI(przedm.IdPrzedmiotu, przedm.Nazwa);
-                List<OdpowiedzUI> odpToAdd = odpow.Select(odp => new OdpowiedzUI(odp.IdOdpowiedzi, odp.Tresc, odp.CzyPoprawna, odp.IdPytania))
-                                                   .ToList();
+
+                if (!_isFullQuestion)
+                    fullPytania.Add(new PytanieSearchEntryUI(pytToAdd, przToAdd));
+                else
+                {
+                    Kategoria kateg = (from kat in dbKategorie
+                                       where kat.IdKategorii == (from przyn in pyt.PrzynaleznoscPytanNavigation
+                                                                 where przyn.IdPytania == pyt.IdPytania
+                                                                 select przyn.IdKategorii).Single()
+                                       select kat).Single();
+
+                    List<Odpowiedz> odpow = (from odp in dbOdpowiedzi
+                                             where odp.IdPytania == pyt.IdPytania
+                                             select odp).ToList();
 
 
-                fullPytania.Add(new PytanieSearchEntryUI(pytToAdd, przToAdd, katToAdd, odpToAdd));
+                    KategoriaUI katToAdd = new KategoriaUI(kateg.IdKategorii, kateg.Nazwa);
+                    List<OdpowiedzUI> odpToAdd = odpow.Select(odp => new OdpowiedzUI(odp.IdOdpowiedzi, odp.Tresc, odp.CzyPoprawna, odp.IdPytania))
+                                                       .ToList();
+
+
+                    fullPytania.Add(new PytanieSearchEntryUI(pytToAdd, przToAdd, katToAdd, odpToAdd));
+                }
 
                 Pytania.Add(pytToAdd);
+
+                //_dbContext.Entry(pyt).State = EntityState.Detached;
             });
         }
 
@@ -102,7 +110,11 @@ namespace TestyMAUI.ViewModel
             PytanieSearchEntryUI toSend = (from fullpyt in fullPytania
                                            where fullpyt.pytanie.Id == WybranePytanie.Id
                                            select fullpyt).Single();
-            WeakReferenceMessenger.Default.Send<GetQuestionMessage>(new GetQuestionMessage(toSend));
+
+            if (!_isFullQuestion) WeakReferenceMessenger.Default.Send<GetSimpleQuestionMessage>(new GetSimpleQuestionMessage(toSend));
+            else WeakReferenceMessenger.Default.Send<GetDetailedQuestionMessage>(new GetDetailedQuestionMessage(toSend));
+            //WeakReferenceMessenger.Default.Unregister<GetDetailedQuestionMessage>(this);
+
             await GoBack();
         }
     }
