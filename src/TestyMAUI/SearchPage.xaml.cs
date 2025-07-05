@@ -2,6 +2,7 @@ using Maui.DataGrid;
 using TestyMAUI.ViewModel;
 
 namespace TestyMAUI;
+
 [QueryProperty(nameof(IsFullQuestion), "isFullQuestion")]
 [QueryProperty(nameof(SubjectFilter), "subjectFilter")]
 [QueryProperty(nameof(IsTestSearch), "isTestSearch")]

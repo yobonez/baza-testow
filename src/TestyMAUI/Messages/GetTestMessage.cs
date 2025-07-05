@@ -1,12 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using TestyMAUI.UIModels;
 
-namespace TestyMAUI.Messages
+namespace TestyMAUI.Messages;
+
+public class GetTestMessage : ValueChangedMessage<ZestawSearchEntryUI>
 {
-    public class GetTestMessage : ValueChangedMessage<ZestawSearchEntryUI>
+    public GetTestMessage(ZestawSearchEntryUI value) : base(value)
     {
-        public GetTestMessage(ZestawSearchEntryUI value) : base(value)
-        {
-        }
     }
 }
