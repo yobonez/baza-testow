@@ -12,16 +12,12 @@
         <ImageButton Grid.Column="1" Command="{Binding TapRefreshCommand}" Source="db_refresh.png"
                      VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
 
-        <dg:DataGrid Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Pytania}" SelectionMode="Single"
-                     SelectedItem="{Binding WybranePytanie}" RowHeight="50">
+        <dg:DataGrid x:Name="searchContents" Grid.Row="1" Grid.Column="1" SelectionMode="Single"
+                      RowHeight="50">
             <dg:DataGrid.NoDataView>
-                <Label HorizontalOptions="Center" VerticalOptions="Center">Ładowanie...</Label>
+                <Label x:Name="loadingLabel" HorizontalOptions="Center" VerticalOptions="Center" Text="Ładowanie..."></Label>
             </dg:DataGrid.NoDataView>
             <dg:DataGrid.Columns>
-                <dg:DataGridColumn Title="Tresc" PropertyName="Tresc">
-                </dg:DataGridColumn>
-                <dg:DataGridColumn Title="Punkty" PropertyName="Punkty">
-                </dg:DataGridColumn>
             </dg:DataGrid.Columns>
             <dg:DataGrid.RowsTextColorPalette>
                 <dg:PaletteCollection>
@@ -35,8 +31,6 @@
                     <Color>#565656</Color>
                 </dg:PaletteCollection>
             </dg:DataGrid.RowsBackgroundColorPalette>
-
-
         </dg:DataGrid>
 
         <Button Grid.Row="2" Grid.Column="1" Command="{Binding TapConfirmCommand}" MaximumHeightRequest="50" WidthRequest="100"

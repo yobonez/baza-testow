@@ -80,7 +80,7 @@
         <Label Grid.Row="1" Text="Zestaw" VerticalOptions="Center"></Label>
         <Entry Grid.Row="1" Text="{Binding Zestaw.Nazwa}" Grid.Column="1"></Entry>
 
-        <ImageButton Grid.Row="1" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=GetFromDBCommand}" 
+        <ImageButton Grid.Row="1" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=GetFromDbCommand}" 
              CommandParameter="{Binding .}"
              Source="get_from_db.png"  Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
         <ImageButton Grid.Row="1" Command="{Binding ClearAllCommand}" Grid.Column="3" Source="clear.png" Style="{StaticResource imgBtnStyle}"></ImageButton>

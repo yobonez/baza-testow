@@ -140,12 +140,12 @@ public partial class QuestionsCreatorViewModel : ObservableObject
     }
 
     [RelayCommand]
-    async Task TapGetFromDb()
+    async Task GetFromDb()
     {
         if(SwitchEditMode())
         {
             RegisterQuestionMessage();
-            await Shell.Current.GoToAsync($"{nameof(SearchPage)}?isFullQuestion=True");
+            await Shell.Current.GoToAsync($"{nameof(SearchPage)}?isFullQuestion=True&isTestSearch=False");
         }
         else
         {
@@ -211,7 +211,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         ResetFields();
         await _dbContext.SaveChangesAsync();
 
-        _dbContext.Entry(pytanieToAdd).State = EntityState.Detached; // edit the same thing more than once
+        _dbContext.Entry(pytanieToAdd).State = EntityState.Detached;
 
         await AppShell.Current.DisplayAlert("Dodanie pytania", "Pytanie zostało dodane.", "OK");
     }
