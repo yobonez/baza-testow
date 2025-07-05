@@ -82,7 +82,7 @@
 
         <ImageButton Grid.Row="1" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TestsCreatorViewModel}}, Path=GetFromDbCommand}" 
              CommandParameter="{Binding .}"
-             Source="get_from_db.png"  Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
+             Source="{Binding ButtonImageGetFromDb}"  Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center" Style="{StaticResource imgBtnStyle}"></ImageButton>
         <ImageButton Grid.Row="1" Command="{Binding ClearAllCommand}" Grid.Column="3" Source="clear.png" Style="{StaticResource imgBtnStyle}"></ImageButton>
 
         <CollectionView Grid.Row="2" Grid.ColumnSpan="3" ItemsSource="{Binding Pytania}" 
@@ -92,6 +92,7 @@
                 Grid.Column="2" 
                 Grid.ColumnSpan="2" 
                 VerticalOptions="End" 
-                Text="Zatwierdź" ></Button>
+                Text="{Binding ButtonMode}"
+                Command="{Binding ConfirmCommand}"></Button>
     </Grid>
 </ContentPage>

@@ -192,6 +192,11 @@ public partial class SearchViewModel : ObservableObject
     [RelayCommand]
     async Task TapConfirm()
     {
+        if (wybranePytanie == null && wybranyZestaw == null)
+        {
+            await Shell.Current.DisplayAlert("Błąd", "Nie wybrano żadnej pozycji.", "OK");
+            return;
+        }
         if (!_isTestSearch) { 
             PytanieSearchEntryUI toSend = (from fullpyt in fullPytania
                                            where fullpyt.pytanie.Id == WybranePytanie.Id

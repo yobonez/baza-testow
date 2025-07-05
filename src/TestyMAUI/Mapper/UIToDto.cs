@@ -38,7 +38,13 @@ public class UIToDto : Profile
                        prop => prop.MapFrom(src => src.Id))
             .ForMember(dest => dest.Nazwa,
                        prop => prop.MapFrom(src => src.Nazwa));
-
+        CreateMap<ZestawUI, Zestaw>()
+            .ForMember(dest => dest.IdZestawu,
+                       prop => prop.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Nazwa,
+                       prop => prop.MapFrom(src => src.Nazwa))
+            .ForMember(dest => dest.IdPrzedmiotu,
+                       prop => prop.MapFrom(src => src.IdPrzedmiotu));
 
 
     }

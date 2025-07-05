@@ -84,6 +84,9 @@ public partial class TestsCreatorViewModel : ObservableObject
             return;
         Pytania.Remove(question);
         RefreshQuestionIndexes();
+        
+        if (Pytania.Count == 1)
+            WybranyPrzedmiot = null;
     }
     [RelayCommand]
     void ClearAll() => ResetFields();
@@ -94,6 +97,8 @@ public partial class TestsCreatorViewModel : ObservableObject
         Zestaw = new ZestawUI();
         Pytania = new() { new PytanieUI() };
         RefreshQuestionIndexes();
+        UpdateButtonStates();
+        WybranyPrzedmiot = null;
     }
     public async Task LoadSubjects()
     {
@@ -101,6 +106,86 @@ public partial class TestsCreatorViewModel : ObservableObject
         Przedmioty = new ObservableCollection<PrzedmiotUI>(
             _mapper.Map<List<PrzedmiotUI>>(przedmiotyDto));
     }
+
+    [RelayCommand]
+    async Task Confirm()
+    {
+        if (EditMode) await EditTestFromDb();
+        else await AddTestToDb();
+    }
+
+    async Task AddTestToDb()
+    {
+        Zestaw zestawToAdd = SetupZestaw();
+
+        await _dbContext.Zestawy.AddAsync(zestawToAdd);
+        await _dbContext.SaveChangesAsync();
+        ResetFields();
+
+        _dbContext.Entry(zestawToAdd).State = EntityState.Detached;
+
+        await AppShell.Current.DisplayAlert("Sukces", "Zestaw został dodany.", "OK");
+    }
+
+
+    bool QuestionExistsInTest(Zestaw test, PytanieWZestawie question)
+    {
+        return test.PytaniaWZestawachNavigation.Any(odp => odp.IdZestawu == test.IdZestawu
+                                                 && odp.IdPytania == question.IdPytania);
+    }
+    async Task EditTestFromDb()
+    {
+        Zestaw zestawToEdit = SetupZestaw();
+        Zestaw zestawDb = _dbContext.Zestawy
+            .Include(z => z.PytaniaWZestawachNavigation)
+            .AsNoTracking()
+            .Single(z => z.IdZestawu == zestawToEdit.IdZestawu);
+
+        foreach(PytanieWZestawie pytanieWZestawie in zestawDb.PytaniaWZestawachNavigation)
+        {
+            if(!QuestionExistsInTest(zestawToEdit, pytanieWZestawie))
+                _dbContext.Entry(pytanieWZestawie).State = EntityState.Deleted;
+
+        }
+        
+        foreach(PytanieWZestawie pytanieWZestawie in zestawToEdit.PytaniaWZestawachNavigation)
+        {
+            if (QuestionExistsInTest(zestawDb, pytanieWZestawie))
+                _dbContext.Entry(pytanieWZestawie).State = EntityState.Modified;
+            else
+                _dbContext.Entry(pytanieWZestawie).State = EntityState.Added;
+        }
+
+        zestawDb = zestawToEdit;
+
+        _dbContext.Zestawy.Update(zestawDb);
+        _dbContext.SaveChanges();
+        _dbContext.Entry(zestawDb).State = EntityState.Detached; // edit the same thing more than once
+
+        ResetFields();
+        SwitchEditMode();
+        await AppShell.Current.DisplayAlert("Edycja zestawu", "Pomyślnie edytowano zestaw.", "OK");
+    }
+
+    Zestaw SetupZestaw()
+    {
+        Zestaw zestaw = _mapper.Map<Zestaw>(Zestaw);
+        zestaw.IdPrzedmiotu = WybranyPrzedmiot.Id;
+        zestaw.PytaniaWZestawachNavigation = _mapper.Map<List<PytanieWZestawie>>(
+            Pytania
+                .Where(pyt => pyt.Id != 0)
+                .Select(pyt =>  
+                    new PytanieWZestawie
+                    {
+                        IdPytania = pyt.Id,
+                        IdZestawu = Zestaw.Id,
+                        IdPrzedmiotu = WybranyPrzedmiot.Id
+                    }).ToList()
+        );
+
+        return zestaw;
+    }
+
 
     // TODO: to-dry
     void RefreshQuestionIndexes()

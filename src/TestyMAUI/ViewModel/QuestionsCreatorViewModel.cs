@@ -208,8 +208,8 @@ public partial class QuestionsCreatorViewModel : ObservableObject
     {
         Pytanie pytanieToAdd = SetupQuestion();
         await _dbContext.Pytania.AddAsync(pytanieToAdd);
-        ResetFields();
         await _dbContext.SaveChangesAsync();
+        ResetFields();
 
         _dbContext.Entry(pytanieToAdd).State = EntityState.Detached;
 
