@@ -25,6 +25,8 @@ namespace TestyMAUI.ViewModel
 
         List<Przedmiot> przedmiotyDto;
 
+        //bool questionEditMode;
+
         [ObservableProperty]
         ZestawUI zestaw;
 
@@ -37,7 +39,8 @@ namespace TestyMAUI.ViewModel
         [ObservableProperty]
         ObservableCollection<PrzedmiotUI> przedmioty;
 
-        [RelayCommand]
+        PytanieUI questionToEdit;
+
         void AddQuestion()
         {
             Pytania.Add(new PytanieUI());
@@ -45,11 +48,14 @@ namespace TestyMAUI.ViewModel
         }
 
         [RelayCommand]
-        async Task FetchQuestion()
+        async Task FetchQuestion(PytanieUI questionParam)
         {
+            questionToEdit = questionParam;
+
             RegisterQuestionMessage();
             await Shell.Current.GoToAsync($"{nameof(SearchPage)}?isFullQuestion=False&subjectFilter={WybranyPrzedmiot?.Nazwa}");
         }
+
         [RelayCommand]
         void RemoveQuestion(PytanieUI question)
         {
@@ -76,7 +82,7 @@ namespace TestyMAUI.ViewModel
         }
 
         // TODO: to-dry
-        private void RefreshQuestionIndexes()
+        void RefreshQuestionIndexes()
         {
             int counter = 1;
             foreach (PytanieUI pyt in Pytania)
@@ -95,13 +101,24 @@ namespace TestyMAUI.ViewModel
                 MainThread.BeginInvokeOnMainThread(() => {
                     PytanieSearchEntryUI received = m.Value;
 
-                    Pytania.Remove(Pytania.Last());
                     if(Pytania.Any(pyt => pyt.Id == received.pytanie.Id))
                     {
                         AppShell.Current.DisplayAlert("Błąd", "To pytanie już istnieje w zestawie.", "OK");
                         return;
                     }
-                    Pytania.Add(new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania));
+
+                    int toReplaceIndex = Pytania.IndexOf(Pytania.Single(pyt => pyt.Id == questionToEdit.Id));
+                    if (questionToEdit.Id != 0)
+                    {
+                        Pytania.RemoveAt(toReplaceIndex);
+                        Pytania.Insert(toReplaceIndex, new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania));
+                    }
+                    else
+                    {
+                        Pytania.Remove(Pytania.Last());
+                        Pytania.Add(new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania));
+                        AddQuestion();
+                    }
 
                     WybranyPrzedmiot ??= Przedmioty.Single(p => p.Id == received.przedmiot.Id);
 

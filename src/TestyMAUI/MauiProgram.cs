@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using TestyMAUI.Mapper;
 using TestyMAUI.Services;
 
 namespace TestyMAUI
