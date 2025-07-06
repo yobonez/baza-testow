@@ -10,16 +10,11 @@ using TestyMAUI.UIModels;
 
 namespace TestyMAUI.ViewModel;
 
-public partial class QuestionsCreatorViewModel : ObservableObject
+public partial class QuestionsCreatorViewModel : BaseCreatorViewModel
 {
-    private readonly TestyDBContext _dbContext;
-    private readonly IMapper _mapper;
-
-    public QuestionsCreatorViewModel(TestyDBContext dbContext, IMapper mapper) 
+    public QuestionsCreatorViewModel(TestyDBContext dbContext, IMapper mapper)
+        : base(dbContext, mapper)
     {
-        _dbContext = dbContext;
-        _mapper = mapper;
-
         ResetFields();
     }
 
@@ -27,15 +22,6 @@ public partial class QuestionsCreatorViewModel : ObservableObject
     List<Przedmiot> przedmiotyDto;
     List<Kategoria> kategorieDto;
     //PytanieSearchEntryUI fullPytanie;
-
-    [ObservableProperty]
-    bool editMode;
-
-    [ObservableProperty]
-    string buttonMode;
-
-    [ObservableProperty]
-    ImageSource buttonImageGetFromDb;
 
     [ObservableProperty]
     PytanieUI pytanie;
@@ -56,12 +42,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
     ObservableCollection<KategoriaUI> kategorie;
     #endregion props
 
-    void UpdateButtonStates()
-    {
-        ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
-        ButtonMode = (EditMode) ? "Zatwierdź edycję" : "Dodaj";
-    }
-    void ResetFields()
+    protected override void ResetFields()
     {
         PrzedmiotUI przedmiot = new(0, "");
         KategoriaUI kategoria = new(0, "");
@@ -74,7 +55,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
 
         RefreshCorrectnessIcons();
         UpdateButtonStates();
-        RefreshAnswersIndexes();
+        RefreshIndexes(Odpowiedzi, "Odpowiedź");
     }
 
     public async Task LoadSubjectsNCategories()
@@ -88,21 +69,12 @@ public partial class QuestionsCreatorViewModel : ObservableObject
             _mapper.Map<List<KategoriaUI>>(kategorieDto));
     }
 
-    private void RefreshAnswersIndexes()
-    {
-        int counter = 1;
-        foreach(OdpowiedzUI odp in Odpowiedzi) {
-            odp.Idx = "Odpowiedź " + counter;
-            counter++;
-        }
-    }
-
     [RelayCommand]
     void AddAnswer()
     {
         Odpowiedzi.Add(new OdpowiedzUI(0, "", false, 0));
         RefreshCorrectnessIcons();
-        RefreshAnswersIndexes();
+        RefreshIndexes(Odpowiedzi, "Odpowiedź");
     }
     [RelayCommand]
     void RemoveAnswer(OdpowiedzUI answer)
@@ -110,10 +82,9 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         if (!Odpowiedzi.Contains(answer) || Odpowiedzi.Count == 1)
             return;
         Odpowiedzi.Remove(answer);
-        RefreshAnswersIndexes();
+        RefreshIndexes(Odpowiedzi, "Odpowiedź");
     }
-    [RelayCommand]
-    void ClearAll() => ResetFields();
+    protected override void ClearAll() => ResetFields();
 
     [RelayCommand]
     void SwitchCorrectness(OdpowiedzUI answer)
@@ -131,20 +102,12 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         }
     }
 
-    bool SwitchEditMode()
-    {
-        EditMode = !EditMode;
-        UpdateButtonStates();
-
-        return EditMode;
-    }
-
     [RelayCommand]
     async Task GetFromDb()
     {
         if(SwitchEditMode())
         {
-            RegisterQuestionMessage();
+            RegisterMessages(CreatorMessageType.QuestionMessageFromQuestions);
             await Shell.Current.GoToAsync($"{nameof(SearchPage)}?isFullQuestion=True&isTestSearch=False");
         }
         else
@@ -153,18 +116,8 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
-    async Task Confirm()
-    {   
-        if (EditMode) await EditQuestionFromDb();
-        else await AddQuestionToDb();
-    }
+    protected override async Task Confirm() => await ProceedConfirm(EditQuestionFromDb, AddQuestionToDb);
 
-    bool AnswerExistsInQuestion(Pytanie question, Odpowiedz answer)
-    {
-        return question.Odpowiedzi.Any(odp => odp.IdOdpowiedzi == answer.IdOdpowiedzi
-                                                 && odp.IdPytania == answer.IdPytania);
-    }
     async Task EditQuestionFromDb()
     {
         Pytanie pytanieToEdit = SetupQuestion();
@@ -235,6 +188,12 @@ public partial class QuestionsCreatorViewModel : ObservableObject
         return pytanie;
     }
 
+    protected override void RegisterMessages(CreatorMessageType messageType)
+    {
+        if (messageType == CreatorMessageType.QuestionMessageFromQuestions)
+            RegisterQuestionMessage();
+    }
+
     void RegisterQuestionMessage()
     {
         WeakReferenceMessenger.Default.Unregister<GetDetailedQuestionMessage>(this);
@@ -252,7 +211,7 @@ public partial class QuestionsCreatorViewModel : ObservableObject
                 Odpowiedzi = new ObservableCollection<OdpowiedzUI>(received.odpowiedzi);
 
                 RefreshCorrectnessIcons();
-                RefreshAnswersIndexes();
+                RefreshIndexes(Odpowiedzi, "Odpowiedź");
                 if (Pytanie.Id == 0)
                     SwitchEditMode();
             }); 

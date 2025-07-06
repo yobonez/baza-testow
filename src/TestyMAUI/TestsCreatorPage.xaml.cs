@@ -5,7 +5,6 @@ namespace TestyMAUI;
 public partial class TestsCreatorPage : ContentPage
 {
     private TestsCreatorViewModel viewModel;
-
     public TestsCreatorPage(TestsCreatorViewModel vm)
 	{
 		InitializeComponent();

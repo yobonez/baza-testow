@@ -10,29 +10,17 @@ using TestyMAUI.UIModels;
 
 namespace TestyMAUI.ViewModel;
 
-public partial class TestsCreatorViewModel : ObservableObject
+public partial class TestsCreatorViewModel : BaseCreatorViewModel
 {
-    private readonly TestyDBContext _dbContext;
-    private readonly IMapper _mapper;
 
-    public TestsCreatorViewModel(TestyDBContext dbContext, IMapper mapper)
+    public TestsCreatorViewModel(TestyDBContext dbContext, IMapper mapper) 
+        : base(dbContext, mapper)
     {
-        _dbContext = dbContext;
-        _mapper = mapper;
-
         ResetFields();
     }
 
+    #region props
     List<Przedmiot> przedmiotyDto;
-
-    [ObservableProperty]
-    bool editMode;
-
-    [ObservableProperty]
-    string buttonMode;
-
-    [ObservableProperty]
-    ImageSource buttonImageGetFromDb;
 
     [ObservableProperty]
     ZestawUI zestaw;
@@ -47,11 +35,12 @@ public partial class TestsCreatorViewModel : ObservableObject
     ObservableCollection<PrzedmiotUI> przedmioty;
 
     PytanieUI questionToEdit;
+    #endregion props
 
     void AddQuestion()
     {
         Pytania.Add(new PytanieUI());
-        RefreshQuestionIndexes();
+        RefreshIndexes(Pytania, "Pytanie");
     }
 
     [RelayCommand]
@@ -59,7 +48,7 @@ public partial class TestsCreatorViewModel : ObservableObject
     {
         if(SwitchEditMode())
         {
-            RegisterTestMessage();
+            RegisterMessages(CreatorMessageType.TestMessage);
             await Shell.Current.GoToAsync($"{nameof(SearchPage)}?isFullQuestion=False&subjectFilter={WybranyPrzedmiot?.Nazwa}&isTestSearch=True");
         }
         else
@@ -73,7 +62,7 @@ public partial class TestsCreatorViewModel : ObservableObject
     {
         questionToEdit = questionParam;
 
-        RegisterQuestionMessage();
+        RegisterMessages(CreatorMessageType.QuestionMessageFromTests);
         await Shell.Current.GoToAsync($"{nameof(SearchPage)}?isFullQuestion=False&subjectFilter={WybranyPrzedmiot?.Nazwa}&isTestSearch=False");
     }
 
@@ -83,20 +72,19 @@ public partial class TestsCreatorViewModel : ObservableObject
         if (!Pytania.Contains(question) || Pytania.Count == 1)
             return;
         Pytania.Remove(question);
-        RefreshQuestionIndexes();
+        RefreshIndexes(Pytania, "Pytanie");
         
         if (Pytania.Count == 1)
             WybranyPrzedmiot = null;
     }
-    [RelayCommand]
-    void ClearAll() => ResetFields();
+    
+    protected override void ClearAll() => ResetFields();
 
-
-    void ResetFields()
+    protected override void ResetFields()
     {
         Zestaw = new ZestawUI();
         Pytania = new() { new PytanieUI() };
-        RefreshQuestionIndexes();
+        RefreshIndexes(Pytania, "Pytanie");
         UpdateButtonStates();
         WybranyPrzedmiot = null;
     }
@@ -107,12 +95,7 @@ public partial class TestsCreatorViewModel : ObservableObject
             _mapper.Map<List<PrzedmiotUI>>(przedmiotyDto));
     }
 
-    [RelayCommand]
-    async Task Confirm()
-    {
-        if (EditMode) await EditTestFromDb();
-        else await AddTestToDb();
-    }
+    protected override async Task Confirm() => await ProceedConfirm(EditTestFromDb, AddTestToDb);
 
     async Task AddTestToDb()
     {
@@ -127,12 +110,6 @@ public partial class TestsCreatorViewModel : ObservableObject
         await AppShell.Current.DisplayAlert("Sukces", "Zestaw został dodany.", "OK");
     }
 
-
-    bool QuestionExistsInTest(Zestaw test, PytanieWZestawie question)
-    {
-        return test.PytaniaWZestawachNavigation.Any(odp => odp.IdZestawu == test.IdZestawu
-                                                 && odp.IdPytania == question.IdPytania);
-    }
     async Task EditTestFromDb()
     {
         Zestaw zestawToEdit = SetupZestaw();
@@ -186,31 +163,13 @@ public partial class TestsCreatorViewModel : ObservableObject
         return zestaw;
     }
 
-
-    // TODO: to-dry
-    void RefreshQuestionIndexes()
+    protected override void RegisterMessages(CreatorMessageType messageType)
     {
-        int counter = 1;
-        foreach (PytanieUI pyt in Pytania)
-        {
-            pyt.Idx = "Pytanie " + counter;
-            counter++;
-        }
+        if (messageType == CreatorMessageType.TestMessage)
+            RegisterTestMessage();
+        else if (messageType == CreatorMessageType.QuestionMessageFromTests)
+            RegisterQuestionMessage();
     }
-    bool SwitchEditMode()
-    {
-        EditMode = !EditMode;
-        UpdateButtonStates();
-
-        return EditMode;
-    }
-    void UpdateButtonStates()
-    {
-        ButtonImageGetFromDb = (EditMode) ? "remove_item.png" : "get_from_db.png";
-        ButtonMode = (EditMode) ? "Zatwierdź edycję" : "Dodaj";
-    }
-
-    // TODO: to-dry (RegisterMessages?)
 
     void RegisterTestMessage()
     {
@@ -224,7 +183,7 @@ public partial class TestsCreatorViewModel : ObservableObject
 
                 AddQuestion();
 
-                RefreshQuestionIndexes();
+                RefreshIndexes(Pytania, "Pytanie");
             });
         });
     }
@@ -257,7 +216,7 @@ public partial class TestsCreatorViewModel : ObservableObject
 
                 WybranyPrzedmiot ??= Przedmioty.Single(p => p.Id == received.przedmiot.Id);
 
-                RefreshQuestionIndexes();
+                RefreshIndexes(Pytania, "Pytanie");
             });
         });
     }

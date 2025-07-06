@@ -2,7 +2,7 @@
 
 namespace TestyMAUI.UIModels;
 
-public partial class OdpowiedzUI : ObservableObject
+public partial class OdpowiedzUI : ObservableObject, IIndexable
 {
     public OdpowiedzUI() { }
     public OdpowiedzUI(int idOdpowiedzi, string tresc, bool czyPoprawna, int idPytania)

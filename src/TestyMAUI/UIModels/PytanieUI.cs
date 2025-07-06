@@ -2,7 +2,7 @@
 
 namespace TestyMAUI.UIModels;
 
-public partial class PytanieUI : ObservableObject
+public partial class PytanieUI : ObservableObject, IIndexable
 {
     public PytanieUI() { }
     public PytanieUI(int id, string tresc, short pkt, bool typ)
