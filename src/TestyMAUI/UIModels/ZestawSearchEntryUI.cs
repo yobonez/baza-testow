@@ -1,22 +1,19 @@
-﻿namespace TestyMAUI.UIModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-public class ZestawSearchEntryUI
+namespace TestyMAUI.UIModels;
+
+public partial class ZestawSearchEntryUI : ObservableObject
 {
+    [ObservableProperty]
     public ZestawUI zestaw;
+    [ObservableProperty]
     public PrzedmiotUI przedmiot;
-    public List<PytanieUI> pytania;
+    public List<PytanieUI>? pytania;
 
-    public ZestawSearchEntryUI(ZestawUI zestaw, PrzedmiotUI przedmiot, List<PytanieUI> pytania)
+    public ZestawSearchEntryUI(ZestawUI zestaw, PrzedmiotUI przedmiot, List<PytanieUI>? pytania)
     {
         this.zestaw = zestaw;
         this.przedmiot = przedmiot;
         this.pytania = pytania;
-    }
-
-    public ZestawSearchEntryUI(ZestawSearchEntryUI other)
-    {
-        zestaw = other.zestaw;
-        przedmiot = other.przedmiot;
-        pytania = new(other.pytania);
     }
 }

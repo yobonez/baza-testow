@@ -3,18 +3,19 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Maui.DataGrid;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using TestyLogic.Models;
 using TestyMAUI.Messages;
+using TestyMAUI.Services;
 using TestyMAUI.UIModels;
 
 namespace TestyMAUI.ViewModel;
 
-public partial class SearchViewModel : ObservableObject
+public partial class SearchViewModel : ObservableObject, IVMRequiresTests
 {
     private readonly TestyDBContext _dbContext;
     private readonly IMapper _mapper;
+    private readonly ViewModelLoader _viewModelLoader;
 
     internal bool _isFullQuestion;
     internal bool _isTestSearch;
@@ -39,116 +40,16 @@ public partial class SearchViewModel : ObservableObject
     List<PytanieSearchEntryUI> fullPytania;
     List<ZestawSearchEntryUI> fullZestawy;
 
-    public SearchViewModel(TestyDBContext dbContext, IMapper mapper)
+    public SearchViewModel(TestyDBContext dbContext, IMapper mapper, ViewModelLoader viewModelLoaders)
     {
         _dbContext = dbContext;
         _mapper = mapper;
+        _viewModelLoader = viewModelLoaders;
+
         Pytania = new ObservableCollection<PytanieUI>();
         Zestawy = new ObservableCollection<ZestawUI>();
         fullPytania = new List<PytanieSearchEntryUI>();
         fullZestawy = new List<ZestawSearchEntryUI>();
-    }
-
-
-    async Task LoadAllQuestions(string? subjectFilter = null)
-    {
-        Pytania.Clear();
-        fullPytania.Clear();
-
-        _dbContext.ChangeTracker.Clear(); // avoid weird stuff happening with EF Core tracking affecting the UI
-
-        var dbPrzedmioty = await _dbContext.Przedmioty.ToListAsync();
-        var dbKategorie = await _dbContext.Kategorie.ToListAsync();
-        var dbOdpowiedzi = await _dbContext.Odpowiedzi.ToListAsync();
-        var dbPytania = await _dbContext.Pytania
-            .Include(el => el.PrzynaleznoscPytanNavigation)
-                .ThenInclude(subEl => subEl.IdPrzedmiotuNavigation)
-            .Include(el => el.PrzynaleznoscPytanNavigation)
-                .ThenInclude(subEl => subEl.IdKategoriiNavigation)
-            .Include(el => el.Odpowiedzi)
-            .ToListAsync();
-
-
-
-        dbPytania.ForEach(pyt =>
-        {
-            if (pyt.TypPytania == true) // not supporting open ones
-                return;
-
-            subjectFilter = (subjectFilter == "") ? null : subjectFilter;
-            if ((subjectFilter != null)
-                && !pyt.PrzynaleznoscPytanNavigation
-                       .Any(prz => prz.IdPrzedmiotuNavigation.Nazwa == subjectFilter))
-                return;
-
-            PytanieUI pytToAdd = new PytanieUI(pyt.IdPytania, pyt.Tresc, pyt.Punkty, pyt.TypPytania);
-
-            PrzedmiotUI przToAdd = _mapper.Map<PrzedmiotUI>(
-                (from prz in dbPrzedmioty
-                                where prz.IdPrzedmiotu == (from przyn in pyt.PrzynaleznoscPytanNavigation
-                                                           where przyn.IdPytania == pyt.IdPytania
-                                                           select przyn.IdPrzedmiotu).Single()
-                                select prz).Single()
-            );
-
-
-            if (!_isFullQuestion)
-                fullPytania.Add(new PytanieSearchEntryUI(pytToAdd, przToAdd));
-            else
-            {
-                KategoriaUI katToAdd = _mapper.Map<KategoriaUI>(
-                                   (from kat in dbKategorie
-                                   where kat.IdKategorii == (from przyn in pyt.PrzynaleznoscPytanNavigation
-                                                             where przyn.IdPytania == pyt.IdPytania
-                                                             select przyn.IdKategorii).Single()
-                                   select kat).Single()
-                );
-
-                List<OdpowiedzUI> odpToAdd = _mapper.Map<List<OdpowiedzUI>>((from odp in dbOdpowiedzi
-                                         where odp.IdPytania == pyt.IdPytania
-                                         select odp).ToList());
-
-
-                fullPytania.Add(new PytanieSearchEntryUI(pytToAdd, przToAdd, katToAdd, odpToAdd));
-            }
-
-            Pytania.Add(pytToAdd);
-        });
-    }
-    async Task LoadAllTests()
-    {
-        Zestawy.Clear();
-        fullZestawy.Clear();
-
-        _dbContext.ChangeTracker.Clear();
-
-        var dbPrzedmioty = await _dbContext.Przedmioty.ToListAsync();
-        var dbKategorie = await _dbContext.Kategorie.ToListAsync();
-        var dbZestawy = await _dbContext.Zestawy
-            .Include(el => el.PytaniaWZestawachNavigation)
-                .ThenInclude(subEl => subEl.IdPytaniaNavigation)
-            .Include(el => el.PytaniaWZestawachNavigation)
-                .ThenInclude(subEl => subEl.IdPrzedmiotuNavigation)
-            .ToListAsync();
-
-        dbZestawy.ForEach(zestaw =>
-        {
-            ZestawUI zestToAdd = new ZestawUI(zestaw.IdZestawu, zestaw.Nazwa, zestaw.DataUtworzenia, zestaw.IdPrzedmiotu);
-
-            PrzedmiotUI przToAdd = _mapper.Map<PrzedmiotUI>((from prz in dbPrzedmioty
-                                  where prz.IdPrzedmiotu == zestaw.IdPrzedmiotu
-                                  select prz)
-                               .Single());
-            List<PytanieUI> pytToAdd = _mapper.Map<List<PytanieUI>>(
-                (from zest in dbZestawy
-                 where zest.IdZestawu == zestaw.IdZestawu
-                 select zest.PytaniaWZestawachNavigation.Select(pytwz => pytwz.IdPytaniaNavigation)).Single()
-            );
-
-            fullZestawy.Add(new ZestawSearchEntryUI(zestToAdd, przToAdd, pytToAdd));
-            Zestawy.Add(zestToAdd);
-        });
-
     }
 
     void InitializeColumns(Type searchType)
@@ -173,9 +74,16 @@ public partial class SearchViewModel : ObservableObject
         currentSubjectFilter = subjectFilter ?? string.Empty;
 
         if (!_isTestSearch)
-        { await LoadAllQuestions(subjectFilter); InitializeColumns(typeof(PytanieUI)); }
+        {
+            (Pytania, fullPytania) = await _viewModelLoader.LoadAllQuestions(this, _isFullQuestion, subjectFilter);
+            InitializeColumns(typeof(PytanieUI));
+        }
         else
-        { await LoadAllTests(); InitializeColumns(typeof(ZestawUI)); }
+        { 
+            // TODO: chyba niepotrzebne jednak ObservableCollection<ZestawUI>
+            (Zestawy, fullZestawy) = await _viewModelLoader.LoadAllTests(this);
+            InitializeColumns(typeof(ZestawUI)); 
+        }
     }
 
     [RelayCommand]
@@ -192,7 +100,7 @@ public partial class SearchViewModel : ObservableObject
     [RelayCommand]
     async Task TapConfirm()
     {
-        if (wybranePytanie == null && wybranyZestaw == null)
+        if (WybranePytanie == null && WybranyZestaw == null)
         {
             await Shell.Current.DisplayAlert("Błąd", "Nie wybrano żadnej pozycji.", "OK");
             return;

@@ -1,22 +1,25 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AutoMapper;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using TestyLogic.Models;
+using TestyMAUI.Services;
 using TestyMAUI.UIModels;
 
 namespace TestyMAUI.ViewModel;
 
 public partial class TestSelectorViewModel : ObservableObject
 {
-    public TestSelectorViewModel()
-    {
-        Zestawy = new() { 
-            new ZestawUI(0, "Testowy zestaw", DateTime.Now, 0) ,
-            new ZestawUI(0, "Testowy zestaw2", DateTime.Now, 0),
-            new ZestawUI(0, "Testowy zestaw3", DateTime.Now, 0),
-            new ZestawUI(0, "Testowy zestaw4", DateTime.Now, 0),
-            new ZestawUI(0, "Testowy zestaw5", DateTime.Now, 0),
-        };
-    }
+    private readonly TestyDBContext _dbContext;
+    private readonly IMapper _mapper;
+    private readonly ViewModelLoader _viewModelLoader;
 
     [ObservableProperty]
-    ObservableCollection<ZestawUI> zestawy;
+    ObservableCollection<ZestawSearchEntryUI> zestawy;
+
+    public TestSelectorViewModel(TestyDBContext dbContext, IMapper mapper, ViewModelLoader viewModelLoader)
+    {
+        _dbContext = dbContext;
+        _mapper = mapper;
+        _viewModelLoader = viewModelLoader;
+    }
 }

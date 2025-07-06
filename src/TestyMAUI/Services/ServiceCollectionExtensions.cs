@@ -57,4 +57,10 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+    public static IServiceCollection AddViewModelHelpers(this IServiceCollection services) 
+    {
+        services.AddSingleton<ViewModelLoader>();
+
+        return services;
+    }
 }

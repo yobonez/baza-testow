@@ -8,9 +8,9 @@
              x:DataType="viewmodel:TestSelectorViewModel">
 
     <Grid Padding="75">
-        <CollectionView ItemsSource="{Binding Zestawy}">
+        <CollectionView ItemsSource="{Binding Zestawy}" Loaded="CollectionView_Loaded">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:ZestawUI">
+                <DataTemplate x:DataType="models:ZestawSearchEntryUI">
                     <Grid RowSpacing="5" Padding="5" HorizontalOptions="Fill">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"></RowDefinition>
@@ -31,9 +31,9 @@
                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
-                                <Label FontSize="Caption" Text="Przedmiot"></Label>
-                                <Label FontSize="Caption" Grid.Column="1" Text="Kategoria" HorizontalOptions="End"></Label>
-                                <Label FontSize="Title" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Nazwa}"></Label>
+                                <Label FontSize="Caption" Text="{Binding Przedmiot.Nazwa}}"></Label>
+                                <Label FontSize="Title" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Zestaw.Nazwa}"></Label>
+                                <!--TODO: przeliczanie-->
                                 <Label FontSize="Caption" Grid.Row="2" Text="Pytania: 2137"></Label>
                                 <Label FontSize="Caption" Grid.Column="1" Grid.Row="3" Text="Pkt. do uzyskania: 2137" HorizontalOptions="End"></Label>
                             </Grid>

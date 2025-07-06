@@ -20,6 +20,7 @@ public static class MauiProgram
         builder.Services.AddViewModels();
         builder.Services.AddDb(builder.Configuration);
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        builder.Services.AddViewModelHelpers();
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
