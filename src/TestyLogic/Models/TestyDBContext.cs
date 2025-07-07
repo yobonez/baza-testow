@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace TestyLogic.Models;
 
@@ -28,6 +29,13 @@ public partial class TestyDBContext : DbContext
     public virtual DbSet<Pytanie> Pytania { get; set; }
 
     public virtual DbSet<Zestaw> Zestawy { get; set; }
+
+    public int IloscPytanZestaw(int idZestawu)
+        => throw new NotSupportedException();
+    public int IloscPunktowZestaw(int idZestawu)
+        => throw new NotSupportedException();
+    public string WygenerujNazweZestawu(string przedmiot)
+        => throw new NotSupportedException();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { optionsBuilder.EnableSensitiveDataLogging(); }
 
@@ -228,6 +236,19 @@ public partial class TestyDBContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("nazwa");
         });
+
+        modelBuilder.HasDbFunction(typeof(TestyDBContext)
+            .GetMethod(nameof(IloscPytanZestaw), new[] { typeof(int) })!)
+            .HasName("ilosc_pytan_zestaw")
+            .HasSchema("dbo");
+        modelBuilder.HasDbFunction(typeof(TestyDBContext)
+            .GetMethod(nameof(IloscPunktowZestaw), new[] { typeof(int) })!)
+            .HasName("ilosc_punktow_zestaw")
+            .HasSchema("dbo");
+        modelBuilder.HasDbFunction(typeof(TestyDBContext)
+            .GetMethod(nameof(WygenerujNazweZestawu), new[] { typeof(string) })!)
+            .HasName("wygeneruj_nazwe_zestawu")
+            .HasSchema("dbo");
 
         OnModelCreatingPartial(modelBuilder);
     }

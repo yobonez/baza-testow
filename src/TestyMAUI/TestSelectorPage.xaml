@@ -16,9 +16,9 @@
                             <RowDefinition Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="0.3*"></ColumnDefinition>
-                            <ColumnDefinition Width="0.3*"></ColumnDefinition>
-                            <ColumnDefinition Width="0.3*"></ColumnDefinition>
+                            <ColumnDefinition Width="0.25*"></ColumnDefinition>
+                            <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                            <ColumnDefinition Width="0.25*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Border Stroke="BlueViolet" StrokeShape="RoundRectangle 10,10,10,10" Grid.Column="1">
                             <Grid BackgroundColor="#896691" Padding="10" RowSpacing="5">
@@ -31,11 +31,10 @@
                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
-                                <Label FontSize="Caption" Text="{Binding Przedmiot.Nazwa}}"></Label>
+                                <Label FontSize="Caption" Text="{Binding Przedmiot.Nazwa}"></Label>
                                 <Label FontSize="Title" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Zestaw.Nazwa}"></Label>
-                                <!--TODO: przeliczanie-->
-                                <Label FontSize="Caption" Grid.Row="2" Text="Pytania: 2137"></Label>
-                                <Label FontSize="Caption" Grid.Column="1" Grid.Row="3" Text="Pkt. do uzyskania: 2137" HorizontalOptions="End"></Label>
+                                <Label FontSize="Caption" Grid.Row="2" Text="{Binding IloscPyt}"></Label>
+                                <Label FontSize="Caption" Grid.Column="1" Grid.Row="3" Text="{Binding IloscPunkt}" HorizontalOptions="End"></Label>
                             </Grid>
                         </Border>
                     </Grid>

@@ -20,9 +20,9 @@ public partial class TestSelectorPage : ContentPage
 
     private async void CollectionView_Loaded(object sender, EventArgs e)
     {
-        List<ZestawSearchEntryUI> zestawy = new(); 
+        List<ZestawSearchEntryUI> zestawy = new();
 
-        (_, zestawy) = await _viewModelLoader.LoadAllTests(null); // workaround swojego rozwi¹zania hell yeah XD jeszcze nie mam na to pomys³u
+        zestawy = await _viewModelLoader.LoadAllTests(true, true);
 
         viewModel.Zestawy = new ObservableCollection<ZestawSearchEntryUI>(zestawy);
     }

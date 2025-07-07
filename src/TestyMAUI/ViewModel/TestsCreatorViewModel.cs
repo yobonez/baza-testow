@@ -193,9 +193,9 @@ public partial class TestsCreatorViewModel : BaseCreatorViewModel
         WeakReferenceMessenger.Default.Register<GetSimpleQuestionMessage>(this, (r, m) =>
         {
             MainThread.BeginInvokeOnMainThread(() => {
-                PytanieSearchEntryUI received = m.Value;
+                PytanieUI received = m.Value;
 
-                if(Pytania.Any(pyt => pyt.Id == received.pytanie.Id))
+                if(Pytania.Any(pyt => pyt.Id == received.Id))
                 {
                     AppShell.Current.DisplayAlert("Błąd", "To pytanie już istnieje w zestawie.", "OK");
                     return;
@@ -205,16 +205,19 @@ public partial class TestsCreatorViewModel : BaseCreatorViewModel
                 if (questionToEdit.Id != 0)
                 {
                     Pytania.RemoveAt(toReplaceIndex);
-                    Pytania.Insert(toReplaceIndex, new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania));
+                    Pytania.Insert(toReplaceIndex, new PytanieUI(received.Id, received.Tresc, received.Punkty, received.TypPytania));
                 }
                 else
                 {
                     Pytania.Remove(Pytania.Last());
-                    Pytania.Add(new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania));
+                    Pytania.Add(new PytanieUI(received.Id, received.Tresc, received.Punkty, received.TypPytania));
                     AddQuestion();
                 }
 
-                WybranyPrzedmiot ??= Przedmioty.Single(p => p.Id == received.przedmiot.Id);
+                WybranyPrzedmiot ??= _mapper.Map<Przedmiot, PrzedmiotUI>
+                                            ((from przyn in _dbContext.PrzynaleznoscPytan
+                                              where przyn.IdPytania == received.Id
+                                              select przyn.IdPrzedmiotuNavigation).Single());
 
                 RefreshIndexes(Pytania, "Pytanie");
             });

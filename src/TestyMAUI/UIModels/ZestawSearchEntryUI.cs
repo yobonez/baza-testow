@@ -8,12 +8,26 @@ public partial class ZestawSearchEntryUI : ObservableObject
     public ZestawUI zestaw;
     [ObservableProperty]
     public PrzedmiotUI przedmiot;
+
+    public int iloscPytan;
+    public int iloscPunktow;
+
+    [ObservableProperty]
+    string iloscPyt;
+    [ObservableProperty]
+    string iloscPunkt;
+
     public List<PytanieUI>? pytania;
 
-    public ZestawSearchEntryUI(ZestawUI zestaw, PrzedmiotUI przedmiot, List<PytanieUI>? pytania)
+    public ZestawSearchEntryUI(ZestawUI zestaw, PrzedmiotUI przedmiot, List<PytanieUI>? pytania, int? iloscPytan, int? iloscPunktow)
     {
         this.zestaw = zestaw;
         this.przedmiot = przedmiot;
         this.pytania = pytania;
+        this.iloscPytan = iloscPytan ?? 0;
+        this.iloscPunktow = iloscPunktow ?? 0;
+
+        IloscPunkt = (iloscPunktow != 0) ? $"Punkty do uzyskania: {iloscPunktow}" : "";
+        IloscPyt = (iloscPytan != 0) ? $"{iloscPytan} pytań" : "";
     }
 }

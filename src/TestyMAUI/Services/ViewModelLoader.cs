@@ -7,6 +7,7 @@ using TestyMAUI.ViewModel;
 
 namespace TestyMAUI.Services;
 
+
 public class ViewModelLoader
 {
     private readonly TestyDBContext _dbContext;
@@ -103,47 +104,44 @@ public class ViewModelLoader
         return (katToAdd, odpToAdd);
     }
 
-    // TODO: isFullTest? for list of tests, because we don't need all the questions in the tests view
     public async 
-        Task<(ObservableCollection<ZestawUI>, List<ZestawSearchEntryUI>?)> 
-        LoadAllTests(IVMRequiresTests? caller)
+        Task<List<ZestawSearchEntryUI>> 
+        LoadAllTests(bool isFullTest, bool loadStats)
     {
-        ObservableCollection<ZestawUI> zestawy = new();
-
-        List<ZestawSearchEntryUI>? fullZestawy = new();
-            //(caller is SearchViewModel) ? new() : null;
+        List<ZestawSearchEntryUI> fullZestawy = new();
 
         var (dbPrzedmioty, dbZestawy) = await LoadSubjectsAndTests();
 
         dbZestawy.ForEach(zestaw =>
         {
             var (zestToAdd, przToAdd) = GetNextTestElement(zestaw, dbPrzedmioty);
+            int? iloscPkt = (loadStats) ? _dbContext.Zestawy.Where(el => el.IdZestawu == zestaw.IdZestawu)
+                                                            .Select(el => _dbContext.IloscPunktowZestaw(el.IdZestawu)).Single() : null,
+                 iloscPyt = (loadStats) ? _dbContext.Zestawy.Where(el => el.IdZestawu == zestaw.IdZestawu)
+                                                            .Select(el => _dbContext.IloscPytanZestaw(el.IdZestawu)).Single() : null;
 
-            List<PytanieUI>? pytToAdd =
-            //(fullZestawy != null) 
-            //? 
+            List<PytanieUI>? pytToAdd = (isFullTest) 
+            ? 
             _mapper.Map<List<PytanieUI>>
             (
                 (from zest in dbZestawy
                  where zest.IdZestawu == zestaw.IdZestawu
                  select zest.PytaniaWZestawachNavigation.Select(pytwz => pytwz.IdPytaniaNavigation)).Single()
-            );
-            //: null;
+            ) : null;
 
-            fullZestawy?.Add(new ZestawSearchEntryUI(zestToAdd, przToAdd, pytToAdd));
-            zestawy.Add(zestToAdd);
+            fullZestawy.Add(new ZestawSearchEntryUI(zestToAdd, przToAdd, pytToAdd, iloscPyt, iloscPkt));
         });
 
-        return (zestawy, fullZestawy);
+        return fullZestawy;
     }
 
     public async 
         Task<(ObservableCollection<PytanieUI>, List<PytanieSearchEntryUI>?)> 
-        LoadAllQuestions(IVMRequiresTests caller, bool isFullQuestion, string? subjectFilter = null)
+        LoadAllQuestions(bool isFullQuestion, string? subjectFilter = null)
     {
         ObservableCollection<PytanieUI> pytania = new();
         List<PytanieSearchEntryUI>? fullPytania = 
-            caller is SearchViewModel ? new() : null;
+            isFullQuestion ? new() : null;
 
         var (dbPrzedmioty, dbPytania, dbKategorie, dbOdpowiedzi) = await LoadQuestionsCategoriesNAnswers();
 

@@ -11,7 +11,7 @@ using TestyMAUI.UIModels;
 
 namespace TestyMAUI.ViewModel;
 
-public partial class SearchViewModel : ObservableObject, IVMRequiresTests
+public partial class SearchViewModel : ObservableObject
 {
     private readonly TestyDBContext _dbContext;
     private readonly IMapper _mapper;
@@ -75,13 +75,13 @@ public partial class SearchViewModel : ObservableObject, IVMRequiresTests
 
         if (!_isTestSearch)
         {
-            (Pytania, fullPytania) = await _viewModelLoader.LoadAllQuestions(this, _isFullQuestion, subjectFilter);
+            (Pytania, fullPytania) = await _viewModelLoader.LoadAllQuestions(_isFullQuestion, subjectFilter);
             InitializeColumns(typeof(PytanieUI));
         }
         else
         { 
-            // TODO: chyba niepotrzebne jednak ObservableCollection<ZestawUI>
-            (Zestawy, fullZestawy) = await _viewModelLoader.LoadAllTests(this);
+            fullZestawy = await _viewModelLoader.LoadAllTests(true, false);
+            Zestawy = new ObservableCollection<ZestawUI>(fullZestawy.Select(zest => zest.Zestaw));
             InitializeColumns(typeof(ZestawUI)); 
         }
     }
@@ -105,13 +105,16 @@ public partial class SearchViewModel : ObservableObject, IVMRequiresTests
             await Shell.Current.DisplayAlert("Błąd", "Nie wybrano żadnej pozycji.", "OK");
             return;
         }
-        if (!_isTestSearch) { 
-            PytanieSearchEntryUI toSend = (from fullpyt in fullPytania
-                                           where fullpyt.pytanie.Id == WybranePytanie.Id
-                                           select fullpyt).Single();
+        if (!_isTestSearch) {
+            if (_isFullQuestion)
+            {
+                PytanieSearchEntryUI toSend = (from fullpyt in fullPytania
+                                               where fullpyt.pytanie.Id == WybranePytanie.Id
+                                               select fullpyt).Single();
+                WeakReferenceMessenger.Default.Send<GetDetailedQuestionMessage>(new GetDetailedQuestionMessage(toSend));
+            }
 
-            if (!_isFullQuestion) WeakReferenceMessenger.Default.Send<GetSimpleQuestionMessage>(new GetSimpleQuestionMessage(toSend));
-            else WeakReferenceMessenger.Default.Send<GetDetailedQuestionMessage>(new GetDetailedQuestionMessage(toSend));
+            else WeakReferenceMessenger.Default.Send<GetSimpleQuestionMessage>(new GetSimpleQuestionMessage(WybranePytanie));
         }
         else
         {
