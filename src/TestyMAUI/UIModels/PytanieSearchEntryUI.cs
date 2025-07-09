@@ -1,10 +1,16 @@
-﻿namespace TestyMAUI.UIModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-public class PytanieSearchEntryUI
+namespace TestyMAUI.UIModels;
+
+public partial class PytanieSearchEntryUI : ObservableObject
 {
+    [ObservableProperty]
     public PytanieUI pytanie;
+    [ObservableProperty]
     public PrzedmiotUI przedmiot;
+    [ObservableProperty]
     public KategoriaUI? kategoria;
+    [ObservableProperty]
     public List<OdpowiedzUI>? odpowiedzi;
 
     public PytanieSearchEntryUI(PytanieUI pyt, PrzedmiotUI prz, KategoriaUI? kat = null, List<OdpowiedzUI>? odp = null)

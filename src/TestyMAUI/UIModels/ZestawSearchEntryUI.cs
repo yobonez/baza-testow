@@ -13,9 +13,9 @@ public partial class ZestawSearchEntryUI : ObservableObject
     public int iloscPunktow;
 
     [ObservableProperty]
-    string iloscPyt;
+    string iloscPytanText;
     [ObservableProperty]
-    string iloscPunkt;
+    string iloscPunktowText;
 
     public List<PytanieUI>? pytania;
 
@@ -27,7 +27,7 @@ public partial class ZestawSearchEntryUI : ObservableObject
         this.iloscPytan = iloscPytan ?? 0;
         this.iloscPunktow = iloscPunktow ?? 0;
 
-        IloscPunkt = (iloscPunktow != 0) ? $"Punkty do uzyskania: {iloscPunktow}" : "";
-        IloscPyt = (iloscPytan != 0) ? $"{iloscPytan} pytań" : "";
+        IloscPunktowText = (iloscPunktow != 0) ? $"Punkty do uzyskania: {iloscPunktow}" : "";
+        IloscPytanText = (iloscPytan != 0) ? $"{iloscPytan} pytań" : "";
     }
 }

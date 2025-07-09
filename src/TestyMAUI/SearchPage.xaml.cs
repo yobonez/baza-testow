@@ -49,14 +49,11 @@ public partial class SearchPage : ContentPage, IQueryAttributable
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query.TryGetValue("isFullQuestion", out var isFullQuestion)) {
+        if (query.TryGetValue("isFullQuestion", out var isFullQuestion))
             IsFullQuestion = isFullQuestion as string;
-        }
-        if (query.TryGetValue("subjectFilter", out var subjectFilter)) {
+        if (query.TryGetValue("subjectFilter", out var subjectFilter))
             SubjectFilter = subjectFilter as string;
-        }
-        if (query.TryGetValue("isTestSearch", out var isTestSearch)) {
+        if (query.TryGetValue("isTestSearch", out var isTestSearch))
             IsTestSearch = isTestSearch as string;
-        }
     }
 }

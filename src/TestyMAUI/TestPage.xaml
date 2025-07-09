@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TestyMAUI.TestPage"
+             Loaded="ContentPage_Loaded"
+             Title="{Binding TestName}"
+             xmlns:models="clr-namespace:TestyMAUI.UIModels"
+             xmlns:viewmodel="clr-namespace:TestyMAUI.ViewModel"
+             x:DataType="viewmodel:TestViewModel">
+    <VerticalStackLayout  HorizontalOptions="Center" VerticalOptions="Center">
+        <Label Text="{Binding CurrentQuestion.Pytanie.Tresc}"></Label>
+        
+    </VerticalStackLayout>
+</ContentPage>

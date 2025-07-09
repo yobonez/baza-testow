@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using TestyLogic.Models;
 using TestyMAUI.Services;
 using TestyMAUI.UIModels;
@@ -14,6 +16,9 @@ public partial class TestSelectorViewModel : ObservableObject
     private readonly ViewModelLoader _viewModelLoader;
 
     [ObservableProperty]
+    ZestawSearchEntryUI wybranyZestaw;
+
+    [ObservableProperty]
     ObservableCollection<ZestawSearchEntryUI> zestawy;
 
     public TestSelectorViewModel(TestyDBContext dbContext, IMapper mapper, ViewModelLoader viewModelLoader)
@@ -21,5 +26,11 @@ public partial class TestSelectorViewModel : ObservableObject
         _dbContext = dbContext;
         _mapper = mapper;
         _viewModelLoader = viewModelLoader;
+    }
+
+    [RelayCommand]
+    async void StartTest(ZestawSearchEntryUI test)
+    {
+        await Shell.Current.GoToAsync($"{nameof(TestPage)}?test={test}");
     }
 }

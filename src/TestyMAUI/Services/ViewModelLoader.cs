@@ -173,4 +173,25 @@ public class ViewModelLoader
 
         return (pytania, fullPytania);
     }
+
+    public async Task<PytanieSearchEntryUI?> LoadFullQuestionFromTest(int idZestawu, int idPytania)
+    {
+        PytanieSearchEntryUI? question = await _dbContext.Pytania
+            .Include(el => el.PrzynaleznoscPytanNavigation)
+                .ThenInclude(subEl => subEl.IdPrzedmiotuNavigation)
+            .Include(el => el.PrzynaleznoscPytanNavigation)
+                .ThenInclude(subEl => subEl.IdKategoriiNavigation)
+            .Include(el => el.Odpowiedzi)
+            .Where(el => el.PytaniaWZestawachNavigation.Any(pytwz => pytwz.IdZestawu == idZestawu && pytwz.IdPytania == idPytania))
+            .Select(pyt => new PytanieSearchEntryUI
+            (
+                new PytanieUI(pyt.IdPytania, pyt.Tresc, pyt.Punkty, pyt.TypPytania),
+                _mapper.Map<PrzedmiotUI>(pyt.PrzynaleznoscPytanNavigation.First().IdPrzedmiotuNavigation),
+                _mapper.Map<KategoriaUI>(pyt.PrzynaleznoscPytanNavigation.First().IdKategoriiNavigation),
+                _mapper.Map<List<OdpowiedzUI>>(pyt.Odpowiedzi.ToList())
+            ))
+            .SingleOrDefaultAsync();
+
+            return question;
+    }
 }

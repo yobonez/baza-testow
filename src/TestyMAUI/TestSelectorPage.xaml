@@ -8,7 +8,11 @@
              x:DataType="viewmodel:TestSelectorViewModel">
 
     <Grid Padding="75">
-        <CollectionView ItemsSource="{Binding Zestawy}" Loaded="CollectionView_Loaded">
+        <CollectionView ItemsSource="{Binding Zestawy}" Loaded="CollectionView_Loaded" 
+                        SelectionMode="Single"
+                        SelectedItem="{Binding WybranyZestaw}"
+                        SelectionChangedCommand="{Binding StartTestCommand}"
+                        SelectionChangedCommandParameter="{Binding WybranyZestaw}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:ZestawSearchEntryUI">
                     <Grid RowSpacing="5" Padding="5" HorizontalOptions="Fill">
@@ -33,8 +37,8 @@
                                 </Grid.ColumnDefinitions>
                                 <Label FontSize="Caption" Text="{Binding Przedmiot.Nazwa}"></Label>
                                 <Label FontSize="Title" Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Zestaw.Nazwa}"></Label>
-                                <Label FontSize="Caption" Grid.Row="2" Text="{Binding IloscPyt}"></Label>
-                                <Label FontSize="Caption" Grid.Column="1" Grid.Row="3" Text="{Binding IloscPunkt}" HorizontalOptions="End"></Label>
+                                <Label FontSize="Caption" Grid.Row="2" Text="{Binding IloscPytanText}"></Label>
+                                <Label FontSize="Caption" Grid.Column="1" Grid.Row="3" Text="{Binding IloscPunktowText}" HorizontalOptions="End"></Label>
                             </Grid>
                         </Border>
                     </Grid>
