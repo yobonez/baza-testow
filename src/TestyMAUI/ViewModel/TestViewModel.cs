@@ -27,7 +27,7 @@ public partial class TestViewModel : ObservableObject
 
     async internal void InitializeTest()
     {
-        TestName = TheTest.Zestaw.Nazwa;
+        TestName = $"Test: \"{TheTest.Zestaw.Nazwa}\"";
         CurrentQuestion = await _viewModelLoader.LoadFullQuestionFromTest(TheTest.Zestaw.Id, TheTest.pytania.First().Id);
     }
 }

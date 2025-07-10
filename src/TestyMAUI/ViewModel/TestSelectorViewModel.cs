@@ -31,6 +31,11 @@ public partial class TestSelectorViewModel : ObservableObject
     [RelayCommand]
     async void StartTest(ZestawSearchEntryUI test)
     {
-        await Shell.Current.GoToAsync($"{nameof(TestPage)}?test={test}");
+        await Shell.Current.GoToAsync(
+            $"{nameof(TestPage)}", 
+            new Dictionary<string, object>() {
+                { "test", WybranyZestaw } 
+            });
     }
+
 }

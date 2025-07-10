@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using TestyMAUI.UIModels;
 using TestyMAUI.ViewModel;
 
