@@ -190,8 +190,13 @@ public class ViewModelLoader
                 _mapper.Map<KategoriaUI>(pyt.PrzynaleznoscPytanNavigation.First().IdKategoriiNavigation),
                 _mapper.Map<List<OdpowiedzUI>>(pyt.Odpowiedzi.ToList())
             ))
+            .OrderBy(el => Guid.NewGuid())
             .SingleOrDefaultAsync();
-
-            return question;
+            
+            question.Odpowiedzi.ForEach(odp => 
+            {
+                odp.CzyPoprawna = false;
+            });
+        return question;
     }
 }

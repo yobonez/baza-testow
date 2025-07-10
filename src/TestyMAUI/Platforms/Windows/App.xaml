@@ -4,5 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
     xmlns:local="using:TestyMAUI.WinUI">
-
+    <maui:MauiWinUIApplication.Resources>
+        <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="BlueViolet" />
+        <SolidColorBrush x:Key="ListViewItemBackgroundPressed"  Color="PaleVioletRed" />
+        <SolidColorBrush x:Key="ListViewItemBackgroundPointerOver"  Color="Violet" />
+        <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver"  Color="PaleVioletRed" />
+        <SolidColorBrush x:Key="ListViewItemCheckBrush"  Color="#0c0c0c" />
+        <SolidColorBrush x:Key="ListViewItemCheckBoxBrush"  Color="#0c0c0c" />
+    </maui:MauiWinUIApplication.Resources>
 </maui:MauiWinUIApplication>

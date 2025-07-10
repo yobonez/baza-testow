@@ -44,7 +44,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<TestsCreatorPage>();
         services.AddSingleton<TestSelectorPage>();
         services.AddSingleton<SearchPage>();
-        services.AddSingleton<TestPage>();
+        services.AddTransient<TestPage>();
 
         return services;
     }
@@ -55,7 +55,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<TestsCreatorViewModel>();
         services.AddSingleton<TestSelectorViewModel>();
         services.AddSingleton<SearchViewModel>();
-        services.AddSingleton<TestViewModel>();
+        services.AddTransient<TestViewModel>();
 
         return services;
     }
