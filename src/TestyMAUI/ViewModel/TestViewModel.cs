@@ -13,13 +13,16 @@ public partial class TestViewModel : ObservableObject
     private ViewModelLoader _viewModelLoader;
 
     internal ZestawSearchEntryUI TheTest;
-    Stack<PytanieSearchEntryUI> answeredQuestions;
+    List<PytanieSearchEntryUI> loadedQuestions;
 
     int questionIndex = 0;
+
 
     [ObservableProperty]
     string testName = "";
 
+    [ObservableProperty]
+    string questionCounterText = "";
 
     [ObservableProperty]
     PytanieSearchEntryUI currentQuestion;
@@ -31,59 +34,63 @@ public partial class TestViewModel : ObservableObject
     {
         //_dbContext = dbContext;
         _viewModelLoader = viewModelLoader;
-        answeredQuestions = new Stack<PytanieSearchEntryUI>();
+        loadedQuestions = new List<PytanieSearchEntryUI>();
         WybraneOdpowiedzi = new ObservableCollection<object>();
     }
 
+    void UpdateQuestionCounterText() => QuestionCounterText = $"Pytanie {questionIndex + 1} z {TheTest.iloscPytan}";
+
+    // TODO: zapisuje sie tylko jedno pytanie pls fix
     async Task GoToNextQuestion()
     {
-        if (CurrentQuestion is not null && !answeredQuestions.Contains(CurrentQuestion)) {
-            CurrentQuestion.Odpowiedzi.ForEach(odp =>
-                odp.CzyPoprawna = WybraneOdpowiedzi.Contains(odp) ? true : false
-            );
-            answeredQuestions.Push(CurrentQuestion);
-            CurrentQuestion = await _viewModelLoader.LoadFullQuestionFromTest(TheTest.Zestaw.Id, TheTest.pytania.ElementAt(questionIndex).Id);
-        }
-        // TODO: else jakiś idk nie myśle już i naprawić bo sie pierwsze pytanie powtrza, a po cofnięciu to już kaplica
+        questionIndex++;
 
-        if(++questionIndex > TheTest.iloscPytan - 1) {
-            //await Shell.Current.GoToAsync($"{nameof(TestResultPage)}", new Dictionary<string, object>()
-            //{
-            //    //...
-            //});
+        CurrentQuestion.Odpowiedzi.ForEach(odp =>
+            odp.CzyPoprawna = WybraneOdpowiedzi.Contains(odp) ? true : false
+        );
+
+        if (questionIndex > TheTest.iloscPytan)
+        {
             await Shell.Current.DisplayAlert(TestName, "Koniec (dummy)", "OK");
             return;
         }
+
+        UpdateQuestionCounterText();
+        if (questionIndex >= loadedQuestions.Count)
+        {
+            CurrentQuestion = await _viewModelLoader.LoadFullQuestionFromTest(TheTest.Zestaw.Id, TheTest.pytania.ElementAt(questionIndex).Id);
+            loadedQuestions.Add(CurrentQuestion!);
+        }
+        else
+            CurrentQuestion = loadedQuestions.ElementAt(questionIndex);
     }
     async Task GoToPreviousQuestion()
     {
+        if (questionIndex == 0) return;
+        
         questionIndex--;
-        PytanieUI questionToLoad = TheTest.pytania.ElementAt(questionIndex);
-        CurrentQuestion = answeredQuestions.Last();
-        WybraneOdpowiedzi.Clear();
-        CurrentQuestion.Odpowiedzi.ForEach(odp =>
-        {
-            if (odp.CzyPoprawna) WybraneOdpowiedzi.Add(odp);
-        });
+        
+        CurrentQuestion = loadedQuestions.ElementAt(questionIndex);
+        UpdateQuestionCounterText();
 
-        answeredQuestions.Pop();
+        List<OdpowiedzUI> castedWybraneOdpowiedzi = WybraneOdpowiedzi.Cast<OdpowiedzUI>().ToList();
+
+        castedWybraneOdpowiedzi.ForEach(odp =>
+            odp.CzyPoprawna = CurrentQuestion.Odpowiedzi.Where(popodp => popodp.CzyPoprawna).Contains(odp) ? true : false
+        );
     }
 
     [RelayCommand]
-    async Task NextQuestion()
-    {
-        await GoToNextQuestion();
-    }
+    async Task NextQuestion() => await GoToNextQuestion();
 
     [RelayCommand]
-    async Task PreviousQuestion()
-    {
-        await GoToPreviousQuestion();
-    }
+    async Task PreviousQuestion() => await GoToPreviousQuestion();
 
     async internal void InitializeTest()
     {
         TestName = $"Test: \"{TheTest.Zestaw.Nazwa}\"";
         CurrentQuestion = await _viewModelLoader.LoadFullQuestionFromTest(TheTest.Zestaw.Id, TheTest.pytania.ElementAt(questionIndex).Id);
+        loadedQuestions.Add(CurrentQuestion!);
+        UpdateQuestionCounterText();
     }
 }
