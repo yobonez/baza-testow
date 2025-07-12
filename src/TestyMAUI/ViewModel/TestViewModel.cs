@@ -13,17 +13,23 @@ public partial class TestViewModel : ObservableObject
     private ViewModelLoader _viewModelLoader;
 
     internal ZestawSearchEntryUI TheTest;
+
     [ObservableProperty]
     List<PytanieSearchEntryUI> loadedQuestions;
 
     int questionIndex = 0;
-
 
     [ObservableProperty]
     string testName = "";
 
     [ObservableProperty]
     string questionCounterText = "";
+
+    [ObservableProperty]
+    string nextButton = "Dalej >";
+
+    [ObservableProperty]
+    bool testCompleted = false;
 
     [ObservableProperty]
     PytanieSearchEntryUI currentQuestion;
@@ -39,19 +45,7 @@ public partial class TestViewModel : ObservableObject
         WybraneOdpowiedzi = new ObservableCollection<object>();
     }
 
-    void UpdateQuestionCounterText() => QuestionCounterText = $"Pytanie {questionIndex + 1} z {TheTest.iloscPytan}";
 
-    void RefreshSelectedAnswers()
-    {
-        WybraneOdpowiedzi.Clear();
-        CurrentQuestion.Odpowiedzi.ForEach(odp =>
-        {
-            if (odp.CzyPoprawna)
-                WybraneOdpowiedzi.Add(odp);
-        });
-    }
-
-    // TODO: zapisuje sie tylko jedno pytanie pls fix
     async Task GoToNextQuestion()
     {
         questionIndex++;
@@ -60,21 +54,23 @@ public partial class TestViewModel : ObservableObject
             odp.CzyPoprawna = WybraneOdpowiedzi.Contains(odp) ? true : false
         );
 
-        if (questionIndex > TheTest.iloscPytan)
+        if (questionIndex >= TheTest.iloscPytan)
         {
-            await Shell.Current.DisplayAlert(TestName, "Koniec (dummy)", "OK");
+            questionIndex--;
+            TestCompleted = true;
+
             return;
         }
 
         UpdateQuestionCounterText();
 
-        if (questionIndex >= loadedQuestions.Count)
+        if (questionIndex >= LoadedQuestions.Count)
         {   
             CurrentQuestion = await _viewModelLoader.LoadFullQuestionFromTest(TheTest.Zestaw.Id, TheTest.pytania.ElementAt(questionIndex).Id);
-            loadedQuestions.Add(CurrentQuestion!);
+            LoadedQuestions.Add(CurrentQuestion!);
         }
         else
-            CurrentQuestion = loadedQuestions.ElementAt(questionIndex);
+            CurrentQuestion = LoadedQuestions.ElementAt(questionIndex);
 
         RefreshSelectedAnswers();
     }
@@ -84,7 +80,7 @@ public partial class TestViewModel : ObservableObject
         
         questionIndex--;
         
-        CurrentQuestion = loadedQuestions.ElementAt(questionIndex);
+        CurrentQuestion = LoadedQuestions.ElementAt(questionIndex);
 
         RefreshSelectedAnswers();
 
@@ -100,8 +96,26 @@ public partial class TestViewModel : ObservableObject
     async internal void InitializeTest()
     {
         TestName = $"Test: \"{TheTest.Zestaw.Nazwa}\"";
+
         CurrentQuestion = await _viewModelLoader.LoadFullQuestionFromTest(TheTest.Zestaw.Id, TheTest.pytania.ElementAt(questionIndex).Id);
-        loadedQuestions.Add(CurrentQuestion!);
-        UpdateQuestionCounterText();
+        LoadedQuestions.Add(CurrentQuestion!);
+
+        UpdateQuestionCounterText();    
     }
+    void UpdateQuestionCounterText()
+    {
+        QuestionCounterText = $"Pytanie {questionIndex + 1} z {TheTest.iloscPytan}";
+        NextButton = (questionIndex == TheTest.iloscPytan - 1) ? "Zakończ" : "Dalej >";
+    }
+
+    void RefreshSelectedAnswers()
+    {
+        WybraneOdpowiedzi.Clear();
+        CurrentQuestion.Odpowiedzi.ForEach(odp =>
+        {
+            if (odp.CzyPoprawna)
+                WybraneOdpowiedzi.Add(odp);
+        });
+    }
+
 }

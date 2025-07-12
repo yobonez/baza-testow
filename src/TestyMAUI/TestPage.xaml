@@ -6,6 +6,7 @@
              Title="{Binding TestName}"
              xmlns:models="clr-namespace:TestyMAUI.UIModels"
              xmlns:viewmodel="clr-namespace:TestyMAUI.ViewModel"
+             xmlns:local="clr-namespace:TestyMAUI.Converters"
              x:DataType="viewmodel:TestViewModel">
     <ContentPage.Resources>
         <Style x:Key="questionLabel" TargetType="Label">
@@ -14,42 +15,93 @@
         <Style x:Key="answerLabel" TargetType="Label">
             <Setter Property="FontSize" Value="Small"></Setter>
         </Style>
+        <Style x:Key="testPageGrid" TargetType="Grid">
+            <Setter Property="HorizontalOptions" Value="Center"></Setter>
+            <Setter Property="VerticalOptions" Value="Center"></Setter>
+        </Style>
+        <local:BoolInverterConverter x:Key="boolInverter"/>
     </ContentPage.Resources>
-    <Grid HorizontalOptions="Center" VerticalOptions="Center">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0.1*"></RowDefinition>
-            <RowDefinition Height="0.8*"></RowDefinition>
-            <RowDefinition Height="0.2*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.15*"></ColumnDefinition>
-            <ColumnDefinition Width="0.75*"></ColumnDefinition>
-            <ColumnDefinition Width="0.15*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+    <Grid>
+        <Grid Style="{StaticResource testPageGrid}" IsVisible="{Binding TestCompleted, Converter={StaticResource boolInverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.1*"></RowDefinition>
+                <RowDefinition Height="0.8*"></RowDefinition>
+                <RowDefinition Height="0.2*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.15*"></ColumnDefinition>
+                <ColumnDefinition Width="0.75*"></ColumnDefinition>
+                <ColumnDefinition Width="0.15*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
-        <VerticalStackLayout Grid.Column="1" Spacing="10">
-            <Label Text="{Binding QuestionCounterText}"></Label>
-            <HorizontalStackLayout Spacing="20">
-                <Label Text="{Binding CurrentQuestion.Przedmiot.Nazwa}" FontAttributes="Bold"></Label>
-                <Label Text="{Binding CurrentQuestion.Kategoria.Nazwa}" FontAttributes="Bold"></Label>
-            </HorizontalStackLayout>
-        </VerticalStackLayout>
-        <VerticalStackLayout Grid.Column="1" Grid.Row="1" Spacing="10" Margin="25">
-            <Label Text="{Binding CurrentQuestion.Pytanie.Tresc}" Style="{StaticResource questionLabel}"></Label>
-            <CollectionView 
+            <VerticalStackLayout Grid.Column="1" Spacing="10">
+                <Label Text="{Binding QuestionCounterText}"></Label>
+                <HorizontalStackLayout Spacing="20">
+                    <Label Text="{Binding CurrentQuestion.Przedmiot.Nazwa}" FontAttributes="Bold"></Label>
+                    <Label Text="{Binding CurrentQuestion.Kategoria.Nazwa}" FontAttributes="Bold"></Label>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1" Grid.Row="1" Spacing="10" Margin="25">
+                <Label Text="{Binding CurrentQuestion.Pytanie.Tresc}" Style="{StaticResource questionLabel}"></Label>
+                <CollectionView 
                             SelectionMode="Multiple" 
                             ItemsSource="{Binding CurrentQuestion.Odpowiedzi}"
                             SelectedItems="{Binding WybraneOdpowiedzi, Mode=TwoWay}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:OdpowiedzUI">
+                            <HorizontalStackLayout Padding="15">
+                                <Label Text="{Binding Tresc}"></Label>
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+            <Button Grid.Row="2" Grid.Column="1" HorizontalOptions="Start" Text="&lt; Wstecz" Command="{Binding PreviousQuestionCommand}"></Button>
+            <Button Grid.Row="2" Grid.Column="1" HorizontalOptions="End" Text="{Binding NextButton}" Command="{Binding NextQuestionCommand}"></Button>
+        </Grid>
+        <Grid Style="{StaticResource testPageGrid}" IsVisible="{Binding TestCompleted}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.2*"></RowDefinition>
+                <RowDefinition Height="0.8*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.15*"></ColumnDefinition>
+                <ColumnDefinition Width="0.75*"></ColumnDefinition>
+                <ColumnDefinition Width="0.15*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <VerticalStackLayout Grid.Column="1" Margin="0,0,0,50">
+                <Label Text="Test zakończony!" FontAttributes="Bold" FontSize="Large"></Label>
+                <Label Text="Wynik: 2137 pkt" FontAttributes="Bold" FontSize="Medium"></Label>
+            </VerticalStackLayout>
+            
+            <CollectionView Grid.Column="1" Grid.Row="1" ItemsSource="{Binding LoadedQuestions}">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:OdpowiedzUI">
-                        <HorizontalStackLayout Padding="15">
-                            <Label Text="{Binding Tresc}"></Label>
-                        </HorizontalStackLayout>
+                    <DataTemplate x:DataType="models:PytanieSearchEntryUI">
+                        <VerticalStackLayout Spacing="10" Padding="0,0,0,50">
+                                <HorizontalStackLayout Spacing="20">
+                                    <Label Text="{Binding Przedmiot.Nazwa}" FontAttributes="Bold"></Label>
+                                    <Label Text="{Binding Kategoria.Nazwa}" FontAttributes="Bold"></Label>
+                                </HorizontalStackLayout>
+                                <Label Text="{Binding Pytanie.Tresc}" Style="{StaticResource questionLabel}"></Label>
+                            
+                                <CollectionView 
+                                        SelectionMode="None" 
+                                        ItemsSource="{Binding Odpowiedzi}">
+                                <CollectionView.ItemTemplate>
+                                        <DataTemplate x:DataType="models:OdpowiedzUI">
+                                            <HorizontalStackLayout Padding="15">
+                                                <Label Text="{Binding Tresc}"></Label>
+                                            </HorizontalStackLayout>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-        </VerticalStackLayout>
-        <Button Grid.Row="2" Grid.Column="1" HorizontalOptions="Start" Text="Wstecz" Command="{Binding PreviousQuestionCommand}"></Button>
-        <Button Grid.Row="2" Grid.Column="1" HorizontalOptions="End" Text="Dalej" Command="{Binding NextQuestionCommand}"></Button>
+                <!--<Label Text="{Binding TestResultText}" FontSize="Medium"></Label>
+                <Button Text="Zakończ" Command="{Binding EndTestCommand}"></Button>-->
+        </Grid>
     </Grid>
 </ContentPage>
