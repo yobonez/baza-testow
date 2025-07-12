@@ -13,6 +13,7 @@ public partial class TestViewModel : ObservableObject
     private ViewModelLoader _viewModelLoader;
 
     internal ZestawSearchEntryUI TheTest;
+    [ObservableProperty]
     List<PytanieSearchEntryUI> loadedQuestions;
 
     int questionIndex = 0;
@@ -40,6 +41,16 @@ public partial class TestViewModel : ObservableObject
 
     void UpdateQuestionCounterText() => QuestionCounterText = $"Pytanie {questionIndex + 1} z {TheTest.iloscPytan}";
 
+    void RefreshSelectedAnswers()
+    {
+        WybraneOdpowiedzi.Clear();
+        CurrentQuestion.Odpowiedzi.ForEach(odp =>
+        {
+            if (odp.CzyPoprawna)
+                WybraneOdpowiedzi.Add(odp);
+        });
+    }
+
     // TODO: zapisuje sie tylko jedno pytanie pls fix
     async Task GoToNextQuestion()
     {
@@ -56,13 +67,16 @@ public partial class TestViewModel : ObservableObject
         }
 
         UpdateQuestionCounterText();
+
         if (questionIndex >= loadedQuestions.Count)
-        {
+        {   
             CurrentQuestion = await _viewModelLoader.LoadFullQuestionFromTest(TheTest.Zestaw.Id, TheTest.pytania.ElementAt(questionIndex).Id);
             loadedQuestions.Add(CurrentQuestion!);
         }
         else
             CurrentQuestion = loadedQuestions.ElementAt(questionIndex);
+
+        RefreshSelectedAnswers();
     }
     async Task GoToPreviousQuestion()
     {
@@ -71,13 +85,10 @@ public partial class TestViewModel : ObservableObject
         questionIndex--;
         
         CurrentQuestion = loadedQuestions.ElementAt(questionIndex);
+
+        RefreshSelectedAnswers();
+
         UpdateQuestionCounterText();
-
-        List<OdpowiedzUI> castedWybraneOdpowiedzi = WybraneOdpowiedzi.Cast<OdpowiedzUI>().ToList();
-
-        castedWybraneOdpowiedzi.ForEach(odp =>
-            odp.CzyPoprawna = CurrentQuestion.Odpowiedzi.Where(popodp => popodp.CzyPoprawna).Contains(odp) ? true : false
-        );
     }
 
     [RelayCommand]
