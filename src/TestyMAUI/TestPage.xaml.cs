@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Threading.Tasks;
 using TestyMAUI.UIModels;
 using TestyMAUI.ViewModel;
 
 namespace TestyMAUI;
 
-// null z jakiegos powodu tofix
 [QueryProperty(nameof(LoadedTest), "test")]
 public partial class TestPage : ContentPage, IQueryAttributable
 {

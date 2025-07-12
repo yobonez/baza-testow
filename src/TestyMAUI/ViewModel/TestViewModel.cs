@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using TestyLogic.Models;
 using TestyMAUI.Services;
 using TestyMAUI.UIModels;
@@ -35,14 +36,14 @@ public partial class TestViewModel : ObservableObject
     PytanieSearchEntryUI currentQuestion;
 
     [ObservableProperty]
-    IList<object> wybraneOdpowiedzi;
+    IList<object> currentChosenAnswers;
 
     public TestViewModel(TestyDBContext dbContext, ViewModelLoader viewModelLoader)
     {
         //_dbContext = dbContext;
         _viewModelLoader = viewModelLoader;
-        loadedQuestions = new List<PytanieSearchEntryUI>();
-        WybraneOdpowiedzi = new ObservableCollection<object>();
+        LoadedQuestions = new List<PytanieSearchEntryUI>();
+        CurrentChosenAnswers = new ObservableCollection<object>();
     }
 
 
@@ -51,14 +52,14 @@ public partial class TestViewModel : ObservableObject
         questionIndex++;
 
         CurrentQuestion.Odpowiedzi.ForEach(odp =>
-            odp.CzyPoprawna = WybraneOdpowiedzi.Contains(odp) ? true : false
+            odp.CzyPoprawna = CurrentChosenAnswers.Contains(odp) ? true : false
         );
 
         if (questionIndex >= TheTest.iloscPytan)
         {
             questionIndex--;
             TestCompleted = true;
-
+            await SaveAnswersAsync();
             return;
         }
 
@@ -110,12 +111,25 @@ public partial class TestViewModel : ObservableObject
 
     void RefreshSelectedAnswers()
     {
-        WybraneOdpowiedzi.Clear();
+        CurrentChosenAnswers.Clear();
         CurrentQuestion.Odpowiedzi.ForEach(odp =>
         {
             if (odp.CzyPoprawna)
-                WybraneOdpowiedzi.Add(odp);
+                CurrentChosenAnswers.Add(odp);
         });
     }
 
+    async Task SaveAnswersAsync()
+    {
+        // temporary solution (i hope so)
+        await Task.Delay(5000);
+        foreach (PytanieSearchEntryUI question in LoadedQuestions)
+        {
+            question.Odpowiedzi.ForEach(odp =>
+            {
+                if (odp.CzyPoprawna)
+                    question.ChosenAnswers.Add(odp);
+            });
+        }
+    }
 }

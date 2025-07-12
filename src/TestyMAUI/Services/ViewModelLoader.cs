@@ -197,6 +197,8 @@ public class ViewModelLoader
             {
                 odp.CzyPoprawna = false;
             });
+
+            question.ChosenAnswers = new ObservableCollection<object>();
         return question;
     }
 }

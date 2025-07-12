@@ -13,6 +13,9 @@ public partial class PytanieSearchEntryUI : ObservableObject
     [ObservableProperty]
     public List<OdpowiedzUI>? odpowiedzi;
 
+    [ObservableProperty]
+    public IList<object>? chosenAnswers;
+
     public PytanieSearchEntryUI(PytanieUI pyt, PrzedmiotUI prz, KategoriaUI? kat = null, List<OdpowiedzUI>? odp = null)
     {
         pytanie = pyt;

@@ -46,7 +46,7 @@
                 <CollectionView 
                             SelectionMode="Multiple" 
                             ItemsSource="{Binding CurrentQuestion.Odpowiedzi}"
-                            SelectedItems="{Binding WybraneOdpowiedzi, Mode=TwoWay}">
+                            SelectedItems="{Binding CurrentChosenAnswers, Mode=TwoWay}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:OdpowiedzUI">
                             <HorizontalStackLayout Padding="15">
@@ -75,7 +75,7 @@
                 <Label Text="Wynik: 2137 pkt" FontAttributes="Bold" FontSize="Medium"></Label>
             </VerticalStackLayout>
             
-            <CollectionView Grid.Column="1" Grid.Row="1" ItemsSource="{Binding LoadedQuestions}">
+            <CollectionView x:Name="completedTestCollectionView" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding LoadedQuestions}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:PytanieSearchEntryUI">
                         <VerticalStackLayout Spacing="10" Padding="0,0,0,50">
@@ -86,14 +86,13 @@
                                 <Label Text="{Binding Pytanie.Tresc}" Style="{StaticResource questionLabel}"></Label>
                             
                                 <CollectionView 
-                                        SelectionMode="None" 
-                                        ItemsSource="{Binding Odpowiedzi}">
+                                        SelectionMode="Multiple"
+                                        ItemsSource="{Binding Odpowiedzi}"
+                                        SelectedItems="{Binding ChosenAnswers, Mode=TwoWay}">
                                 <CollectionView.ItemTemplate>
-                                        <DataTemplate x:DataType="models:OdpowiedzUI">
-                                            <HorizontalStackLayout Padding="15">
-                                                <Label Text="{Binding Tresc}"></Label>
-                                            </HorizontalStackLayout>
-                                        </DataTemplate>
+                                    <DataTemplate x:DataType="models:OdpowiedzUI">
+                                        <Label Text="{Binding Tresc}" Padding="15"></Label>
+                                    </DataTemplate>
                                     </CollectionView.ItemTemplate>
                                 </CollectionView>
                             </VerticalStackLayout>
