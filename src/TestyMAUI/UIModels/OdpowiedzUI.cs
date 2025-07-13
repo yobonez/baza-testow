@@ -21,6 +21,9 @@ public partial class OdpowiedzUI : ObservableObject, IIndexable
     public int IdPytania { get; set; }
 
     [ObservableProperty]
+    Color selectedResultBkgColor = new Color(0, 0, 0, 0); 
+
+    [ObservableProperty]
     public ImageSource correctnessIcon = null!;
 
     [ObservableProperty]

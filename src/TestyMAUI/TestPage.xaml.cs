@@ -1,5 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using System.Threading.Tasks;
 using TestyMAUI.UIModels;
 using TestyMAUI.ViewModel;
 

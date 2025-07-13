@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using TestyLogic.Models;
 using TestyMAUI.UIModels;
-using TestyMAUI.ViewModel;
 
 namespace TestyMAUI.Services;
 
@@ -200,5 +199,17 @@ public class ViewModelLoader
 
             question.ChosenAnswers = new ObservableCollection<object>();
         return question;
+    }
+
+    public async Task<List<OdpowiedzUI>> GetProperAnswers(List<OdpowiedzUI> answers)
+    { 
+        var answerIds = answers.Select(ans => ans.Id).ToList();
+        var dbOdpowiedzi = await _dbContext.Odpowiedzi
+            .Where(odp => answerIds.Contains(odp.IdOdpowiedzi))
+            .ToListAsync();
+
+        answers.Zip(dbOdpowiedzi, (ans, dbOdp) => ans.CzyPoprawna = dbOdp.CzyPoprawna).ToList();
+
+        return answers;
     }
 }

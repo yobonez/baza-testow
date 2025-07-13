@@ -20,6 +20,7 @@
             <Setter Property="VerticalOptions" Value="Center"></Setter>
         </Style>
         <local:BoolInverterConverter x:Key="boolInverter"/>
+
     </ContentPage.Resources>
     <Grid>
         <Grid Style="{StaticResource testPageGrid}" IsVisible="{Binding TestCompleted, Converter={StaticResource boolInverter}}">
@@ -49,9 +50,7 @@
                             SelectedItems="{Binding CurrentChosenAnswers, Mode=TwoWay}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:OdpowiedzUI">
-                            <HorizontalStackLayout Padding="15">
-                                <Label Text="{Binding Tresc}"></Label>
-                            </HorizontalStackLayout>
+                            <Label Padding="15" Text="{Binding Tresc}"></Label>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
@@ -91,7 +90,11 @@
                                         SelectedItems="{Binding ChosenAnswers, Mode=TwoWay}">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate x:DataType="models:OdpowiedzUI">
-                                        <Label Text="{Binding Tresc}" Padding="15"></Label>
+                                        <Frame BackgroundColor="{Binding SelectedResultBkgColor}"
+                                               BorderColor="{Binding SelectedResultBkgColor}"
+                                               CornerRadius="5">
+                                            <Label Text="{Binding Tresc}"></Label>
+                                        </Frame>
                                     </DataTemplate>
                                     </CollectionView.ItemTemplate>
                                 </CollectionView>

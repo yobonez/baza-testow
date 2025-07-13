@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using TestyLogic.Models;
 using TestyMAUI.Services;
 using TestyMAUI.UIModels;
@@ -59,7 +58,8 @@ public partial class TestViewModel : ObservableObject
         {
             questionIndex--;
             TestCompleted = true;
-            await SaveAnswersAsync();
+            await SaveAnswers();
+            await ValidateAnswers();
             return;
         }
 
@@ -119,7 +119,7 @@ public partial class TestViewModel : ObservableObject
         });
     }
 
-    async Task SaveAnswersAsync()
+    async Task SaveAnswers()
     {
         // temporary solution (i hope so)
         await Task.Delay(5000);
@@ -131,5 +131,45 @@ public partial class TestViewModel : ObservableObject
                     question.ChosenAnswers.Add(odp);
             });
         }
+    }
+
+    async Task ValidateAnswers()
+    {
+        Color valid = Colors.Green,
+              validNotSelected = Colors.LightGreen,
+              invalid = Colors.Red,
+              invalidNotSelected = Colors.Transparent;
+
+        List<OdpowiedzUI> ansToRestore = new();
+
+        LoadedQuestions.ForEach(q =>
+        {
+            ansToRestore.AddRange(q.Odpowiedzi);
+        });
+
+        List<OdpowiedzUI> properAnswers = await _viewModelLoader.GetProperAnswers(ansToRestore);
+
+
+        LoadedQuestions.ForEach(q =>
+        {
+            q.Odpowiedzi.ForEach(odp =>
+            {
+                if (properAnswers.Any(pa => pa.Id == odp.Id
+                                      && pa.CzyPoprawna
+                                      && q.ChosenAnswers.Contains(pa)))
+                    odp.SelectedResultBkgColor = valid;
+
+                else if (properAnswers.Any(pa => pa.Id == odp.Id
+                                      && !pa.CzyPoprawna
+                                      && q.ChosenAnswers.Contains(pa)))
+                    odp.SelectedResultBkgColor = invalid;
+
+                else if (properAnswers.Any(pa => pa.Id == odp.Id
+                                      && pa.CzyPoprawna
+                                      && !q.ChosenAnswers.Contains(pa)))
+                    odp.SelectedResultBkgColor = validNotSelected;
+            });
+        });
+
     }
 }
