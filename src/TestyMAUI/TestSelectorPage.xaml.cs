@@ -22,7 +22,7 @@ public partial class TestSelectorPage : ContentPage
     {
         List<ZestawSearchEntryUI> zestawy = new();
 
-        zestawy = await _viewModelLoader.LoadAllTests(true, true);
+        zestawy = await _viewModelLoader.LoadAllTests(isFullTest: true, loadStats: true);
 
         viewModel.Zestawy = new ObservableCollection<ZestawSearchEntryUI>(zestawy);
     }

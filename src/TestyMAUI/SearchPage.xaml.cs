@@ -1,5 +1,4 @@
 using Maui.DataGrid;
-using System.Text.Encodings.Web;
 using TestyMAUI.ViewModel;
 
 namespace TestyMAUI;

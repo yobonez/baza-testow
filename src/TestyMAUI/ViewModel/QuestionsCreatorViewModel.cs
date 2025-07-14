@@ -12,12 +12,6 @@ namespace TestyMAUI.ViewModel;
 
 public partial class QuestionsCreatorViewModel : BaseCreatorViewModel
 {
-    public QuestionsCreatorViewModel(TestyDBContext dbContext, IMapper mapper)
-        : base(dbContext, mapper)
-    {
-        ResetFields();
-    }
-
     #region props
     List<Przedmiot> przedmiotyDto;
     List<Kategoria> kategorieDto;
@@ -41,6 +35,12 @@ public partial class QuestionsCreatorViewModel : BaseCreatorViewModel
     [ObservableProperty]
     ObservableCollection<KategoriaUI> kategorie;
     #endregion props
+    public QuestionsCreatorViewModel(TestyDBContext dbContext, IMapper mapper)
+        : base(dbContext, mapper)
+    {
+        ResetFields();
+    }
+
 
     protected override void ResetFields()
     {

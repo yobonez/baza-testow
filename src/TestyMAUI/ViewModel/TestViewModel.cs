@@ -10,7 +10,7 @@ namespace TestyMAUI.ViewModel;
 
 public partial class TestViewModel : ObservableObject
 {
-    //private readonly TestyDBContext _dbContext;
+    #region props
     private ViewModelLoader _viewModelLoader;
 
     internal ZestawSearchEntryUI TheTest;
@@ -42,6 +42,7 @@ public partial class TestViewModel : ObservableObject
 
     [ObservableProperty]
     IList<object> currentChosenAnswers;
+    #endregion
 
     public TestViewModel(TestyDBContext dbContext, ViewModelLoader viewModelLoader)
     {

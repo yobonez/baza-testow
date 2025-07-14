@@ -13,6 +13,7 @@ namespace TestyMAUI.ViewModel;
 
 public partial class SearchViewModel : ObservableObject
 {
+    #region props
     private readonly TestyDBContext _dbContext;
     private readonly IMapper _mapper;
     private readonly ViewModelLoader _viewModelLoader;
@@ -39,6 +40,7 @@ public partial class SearchViewModel : ObservableObject
 
     List<PytanieSearchEntryUI> fullPytania;
     List<ZestawSearchEntryUI> fullZestawy;
+    #endregion
 
     public SearchViewModel(TestyDBContext dbContext, IMapper mapper, ViewModelLoader viewModelLoaders)
     {
@@ -80,7 +82,7 @@ public partial class SearchViewModel : ObservableObject
         }
         else
         { 
-            fullZestawy = await _viewModelLoader.LoadAllTests(true, false);
+            fullZestawy = await _viewModelLoader.LoadAllTests(isFullTest:true, loadStats: false);
             Zestawy = new ObservableCollection<ZestawUI>(fullZestawy.Select(zest => zest.Zestaw));
             InitializeColumns(typeof(ZestawUI)); 
         }
