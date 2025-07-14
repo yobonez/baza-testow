@@ -71,7 +71,7 @@
 
             <VerticalStackLayout Grid.Column="1" Margin="0,0,0,50">
                 <Label Text="Test zakończony!" FontAttributes="Bold" FontSize="Large"></Label>
-                <Label Text="Wynik: 2137 pkt" FontAttributes="Bold" FontSize="Medium"></Label>
+                <Label Text="{Binding TotalPointsText}" FontAttributes="Bold" FontSize="Medium"></Label>
             </VerticalStackLayout>
             
             <CollectionView x:Name="completedTestCollectionView" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding LoadedQuestions}">

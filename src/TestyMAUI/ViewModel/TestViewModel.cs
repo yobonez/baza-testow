@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using TestyLogic.Models;
 using TestyMAUI.Services;
 using TestyMAUI.UIModels;
@@ -30,6 +31,11 @@ public partial class TestViewModel : ObservableObject
 
     [ObservableProperty]
     bool testCompleted = false;
+
+    Decimal totalPoints = 0;
+
+    [ObservableProperty]
+    string totalPointsText = "";
 
     [ObservableProperty]
     PytanieSearchEntryUI currentQuestion;
@@ -137,8 +143,10 @@ public partial class TestViewModel : ObservableObject
     {
         Color valid = Colors.Green,
               validNotSelected = Colors.LightGreen,
-              invalid = Colors.Red,
-              invalidNotSelected = Colors.Transparent;
+              invalid = Colors.Red;
+
+        NumberFormatInfo setPrecision = new();
+        setPrecision.NumberDecimalDigits = 1;
 
         List<OdpowiedzUI> ansToRestore = new();
 
@@ -154,15 +162,25 @@ public partial class TestViewModel : ObservableObject
         {
             q.Odpowiedzi.ForEach(odp =>
             {
+                int totalValidAnswers = properAnswers.Count(pa => pa.IdPytania == q.Pytanie.Id && pa.CzyPoprawna);
+
+                Decimal pointsPerAns = Convert.ToDecimal(q.Pytanie.Punkty) / Convert.ToDecimal(totalValidAnswers);
+
                 if (properAnswers.Any(pa => pa.Id == odp.Id
                                       && pa.CzyPoprawna
                                       && q.ChosenAnswers.Contains(pa)))
+                {
                     odp.SelectedResultBkgColor = valid;
+                    totalPoints += pointsPerAns;
+                }
 
                 else if (properAnswers.Any(pa => pa.Id == odp.Id
                                       && !pa.CzyPoprawna
                                       && q.ChosenAnswers.Contains(pa)))
+                {
                     odp.SelectedResultBkgColor = invalid;
+                    totalPoints -= pointsPerAns;
+                }
 
                 else if (properAnswers.Any(pa => pa.Id == odp.Id
                                       && pa.CzyPoprawna
@@ -171,5 +189,6 @@ public partial class TestViewModel : ObservableObject
             });
         });
 
+        TotalPointsText = $"Zdobyte punkty: {totalPoints.ToString("N", setPrecision)} pkt";
     }
 }

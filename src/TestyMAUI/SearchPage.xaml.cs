@@ -1,4 +1,5 @@
 using Maui.DataGrid;
+using System.Text.Encodings.Web;
 using TestyMAUI.ViewModel;
 
 namespace TestyMAUI;
@@ -51,8 +52,10 @@ public partial class SearchPage : ContentPage, IQueryAttributable
     {
         if (query.TryGetValue("isFullQuestion", out var isFullQuestion))
             IsFullQuestion = isFullQuestion as string;
+
         if (query.TryGetValue("subjectFilter", out var subjectFilter))
-            SubjectFilter = subjectFilter as string;
+        { SubjectFilter = Uri.UnescapeDataString((string)subjectFilter); }
+
         if (query.TryGetValue("isTestSearch", out var isTestSearch))
             IsTestSearch = isTestSearch as string;
     }
