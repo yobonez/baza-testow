@@ -181,6 +181,7 @@ public partial class TestViewModel : ObservableObject
                 {
                     odp.SelectedResultBkgColor = invalid;
                     totalPoints -= pointsPerAns;
+                    totalPoints = (totalPoints < 0) ? 0 : totalPoints;
                 }
 
                 else if (properAnswers.Any(pa => pa.Id == odp.Id
@@ -190,6 +191,6 @@ public partial class TestViewModel : ObservableObject
             });
         });
 
-        TotalPointsText = $"Zdobyte punkty: {totalPoints.ToString("N", setPrecision)} pkt";
+        TotalPointsText = $"Zdobyte punkty: {totalPoints.ToString("N", setPrecision)}/{TheTest.iloscPunktow} pkt";
     }
 }

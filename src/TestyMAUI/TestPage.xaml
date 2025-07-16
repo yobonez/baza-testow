@@ -60,7 +60,7 @@
         </Grid>
         <Grid Style="{StaticResource testPageGrid}" IsVisible="{Binding TestCompleted}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.2*"></RowDefinition>
+                <RowDefinition Height="0.5*"></RowDefinition>
                 <RowDefinition Height="0.8*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -73,18 +73,18 @@
                 <Label Text="Test zakończony!" FontAttributes="Bold" FontSize="Large"></Label>
                 <Label Text="{Binding TotalPointsText}" FontAttributes="Bold" FontSize="Medium"></Label>
             </VerticalStackLayout>
-            
+
             <CollectionView x:Name="completedTestCollectionView" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding LoadedQuestions}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:PytanieSearchEntryUI">
                         <VerticalStackLayout Spacing="10" Padding="0,0,0,50">
-                                <HorizontalStackLayout Spacing="20">
-                                    <Label Text="{Binding Przedmiot.Nazwa}" FontAttributes="Bold"></Label>
-                                    <Label Text="{Binding Kategoria.Nazwa}" FontAttributes="Bold"></Label>
-                                </HorizontalStackLayout>
-                                <Label Text="{Binding Pytanie.Tresc}" Style="{StaticResource questionLabel}"></Label>
-                            
-                                <CollectionView 
+                            <HorizontalStackLayout Spacing="20">
+                                <Label Text="{Binding Przedmiot.Nazwa}" FontAttributes="Bold"></Label>
+                                <Label Text="{Binding Kategoria.Nazwa}" FontAttributes="Bold"></Label>
+                            </HorizontalStackLayout>
+                            <Label Text="{Binding Pytanie.Tresc}" Style="{StaticResource questionLabel}"></Label>
+
+                            <CollectionView 
                                         SelectionMode="Multiple"
                                         ItemsSource="{Binding Odpowiedzi}"
                                         SelectedItems="{Binding ChosenAnswers, Mode=TwoWay}">
@@ -96,14 +96,12 @@
                                             <Label Text="{Binding Tresc}"></Label>
                                         </Frame>
                                     </DataTemplate>
-                                    </CollectionView.ItemTemplate>
-                                </CollectionView>
-                            </VerticalStackLayout>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-                <!--<Label Text="{Binding TestResultText}" FontSize="Medium"></Label>
-                <Button Text="Zakończ" Command="{Binding EndTestCommand}"></Button>-->
         </Grid>
     </Grid>
 </ContentPage>

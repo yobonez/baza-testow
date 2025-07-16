@@ -177,6 +177,8 @@ public partial class TestsCreatorViewModel : BaseCreatorViewModel
         WeakReferenceMessenger.Default.Register<GetTestMessage>(this, (r, m) =>
         {
             MainThread.BeginInvokeOnMainThread(() => {
+                if (m.Value is null) { SwitchEditMode(); return; }
+
                 Zestaw = m.Value.zestaw;
                 Pytania = new ObservableCollection<PytanieUI>(m.Value.pytania);
                 WybranyPrzedmiot = m.Value.przedmiot;
@@ -193,9 +195,9 @@ public partial class TestsCreatorViewModel : BaseCreatorViewModel
         WeakReferenceMessenger.Default.Register<GetSimpleQuestionMessage>(this, (r, m) =>
         {
             MainThread.BeginInvokeOnMainThread(() => {
-                PytanieUI received = m.Value;
+                PytanieUI? received = m.Value;
 
-                if(Pytania.Any(pyt => pyt.Id == received.Id))
+                if (Pytania.Any(pyt => pyt.Id == received.Id))
                 {
                     AppShell.Current.DisplayAlert("Błąd", "To pytanie już istnieje w zestawie.", "OK");
                     return;

@@ -1,4 +1,8 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Maui.DataGrid;
+using System.ComponentModel.Design;
+using TestyMAUI.Messages;
+using TestyMAUI.UIModels;
 using TestyMAUI.ViewModel;
 
 namespace TestyMAUI;
@@ -24,6 +28,7 @@ public partial class SearchPage : ContentPage, IQueryAttributable
 
     private async void ContentPage_Loaded(object sender, EventArgs e)
     {
+        viewModel.ResetSelection();
         viewModel._isFullQuestion = bool.Parse(IsFullQuestion);
         viewModel._isTestSearch = bool.Parse(IsTestSearch ?? "False");
 
@@ -57,5 +62,21 @@ public partial class SearchPage : ContentPage, IQueryAttributable
 
         if (query.TryGetValue("isTestSearch", out var isTestSearch))
             IsTestSearch = isTestSearch as string;
+    }
+
+    protected override void OnNavigatingFrom(NavigatingFromEventArgs args)
+    {
+        base.OnNavigatingFrom(args);
+        if (!viewModel.hasItemBeenSelected)
+        {
+            if (!viewModel._isTestSearch)
+            {
+                if (viewModel._isFullQuestion)
+                    WeakReferenceMessenger.Default.Send<GetDetailedQuestionMessage>(new GetDetailedQuestionMessage(null!));
+                else
+                    WeakReferenceMessenger.Default.Send<GetSimpleQuestionMessage>(new GetSimpleQuestionMessage(null!));
+            }
+            else WeakReferenceMessenger.Default.Send<GetTestMessage>(new GetTestMessage(null!));
+        }
     }
 }

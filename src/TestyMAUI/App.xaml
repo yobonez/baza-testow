@@ -6,8 +6,11 @@
     <Application.Resources>
         <ResourceDictionary>
             <Style x:Key="imgBtnStyle" TargetType="ImageButton">
-                <Setter Property="MaximumHeightRequest" Value="50"></Setter>
-                <Setter Property="MaximumWidthRequest" Value="50"></Setter>
+                <Setter Property="HeightRequest" Value="50"></Setter>
+                <Setter Property="WidthRequest" Value="50"></Setter>
+            </Style>
+            <Style x:Key="pickerStyle" TargetType="Picker">
+                <Setter Property="MaximumHeightRequest" Value="40"></Setter>
             </Style>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />

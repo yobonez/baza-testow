@@ -20,6 +20,7 @@ public partial class SearchViewModel : ObservableObject
 
     internal bool _isFullQuestion;
     internal bool _isTestSearch;
+    internal bool hasItemBeenSelected = false;
 
     string currentSubjectFilter;
 
@@ -91,8 +92,11 @@ public partial class SearchViewModel : ObservableObject
     [RelayCommand]
     async Task TapRefresh()
     {
+        ResetSelection();
         await LoadAllItems(currentSubjectFilter);
     }
+
+    internal void ResetSelection() => hasItemBeenSelected = false;
 
     async Task GoBack()
     {
@@ -126,6 +130,7 @@ public partial class SearchViewModel : ObservableObject
             WeakReferenceMessenger.Default.Send<GetTestMessage>(new GetTestMessage(toSend));
         }
 
+        hasItemBeenSelected = true;
         await GoBack();
     }
 }

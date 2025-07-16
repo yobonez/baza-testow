@@ -200,7 +200,8 @@ public partial class QuestionsCreatorViewModel : BaseCreatorViewModel
         WeakReferenceMessenger.Default.Register<GetDetailedQuestionMessage>(this, (r, m) =>
         {
             MainThread.BeginInvokeOnMainThread(() => {
-                PytanieSearchEntryUI received = m.Value;
+                PytanieSearchEntryUI? received = m.Value;
+                if (received is null) { SwitchEditMode(); return; }
 
                 Pytanie = new PytanieUI(received.pytanie.Id, received.pytanie.Tresc, received.pytanie.Punkty, received.pytanie.TypPytania);
 

@@ -56,10 +56,10 @@
     
     <Grid Padding="75" RowSpacing="10" ColumnSpacing="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.1*"></RowDefinition>
             <RowDefinition Height="0.2*"></RowDefinition>
+            <RowDefinition Height="0.3*"></RowDefinition>
             <RowDefinition Height="0.85*"></RowDefinition>
-            <RowDefinition Height="0.15*"></RowDefinition>
+            <RowDefinition Height="0.20*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.1*"></ColumnDefinition>
@@ -70,7 +70,7 @@
 
         <HorizontalStackLayout Spacing="10" Grid.Column="1" Loaded="HorizontalStackLayout_Loaded">
             <Label VerticalOptions="Center" Text="Przedmiot:"></Label>
-            <Picker x:Name="SubjectPicker" SelectedItem="{Binding WybranyPrzedmiot}" ItemsSource="{Binding Przedmioty}" >
+            <Picker x:Name="SubjectPicker" SelectedItem="{Binding WybranyPrzedmiot}" ItemsSource="{Binding Przedmioty}" Style="{StaticResource pickerStyle}">
                 <Picker.ItemDisplayBinding>
                     <Binding Path="Nazwa"></Binding>
                 </Picker.ItemDisplayBinding>
