@@ -147,6 +147,8 @@ public partial class TestsCreatorViewModel : BaseCreatorViewModel
     Zestaw SetupZestaw()
     {
         Zestaw zestaw = _mapper.Map<Zestaw>(Zestaw);
+
+
         zestaw.IdPrzedmiotu = WybranyPrzedmiot.Id;
         zestaw.PytaniaWZestawachNavigation = _mapper.Map<List<PytanieWZestawie>>(
             Pytania
@@ -160,6 +162,17 @@ public partial class TestsCreatorViewModel : BaseCreatorViewModel
                     }).ToList()
         );
 
+        if(zestaw.Nazwa is null || zestaw.Nazwa.Trim() == string.Empty)
+        {
+            // TODO: msgbox service
+            zestaw.Nazwa = _dbContext.Zestawy
+                .Select(el => _dbContext.WygenerujNazweZestawu(
+                    el.PytaniaWZestawachNavigation
+                      .Where(subEl => subEl.IdPrzedmiotu == WybranyPrzedmiot.Id)
+                      .Single().IdPrzedmiotu, ""))
+                .Where(el => el.ToString().Contains(WybranyPrzedmiot.Nazwa))
+                .First();
+        }
         return zestaw;
     }
 
@@ -196,6 +209,7 @@ public partial class TestsCreatorViewModel : BaseCreatorViewModel
         {
             MainThread.BeginInvokeOnMainThread(() => {
                 PytanieUI? received = m.Value;
+                if (received is null) return;
 
                 if (Pytania.Any(pyt => pyt.Id == received.Id))
                 {

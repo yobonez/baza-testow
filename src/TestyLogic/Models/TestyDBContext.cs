@@ -33,7 +33,7 @@ public partial class TestyDBContext : DbContext
         => throw new NotSupportedException();
     public int IloscPunktowZestaw(int idZestawu)
         => throw new NotSupportedException();
-    public string WygenerujNazweZestawu(string przedmiot)
+    public string WygenerujNazweZestawu(int idPrzedmiotu = 0, string przedmiot = "")
         => throw new NotSupportedException();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { optionsBuilder.EnableSensitiveDataLogging(); }
@@ -245,7 +245,7 @@ public partial class TestyDBContext : DbContext
             .HasName("ilosc_punktow_zestaw")
             .HasSchema("dbo");
         modelBuilder.HasDbFunction(typeof(TestyDBContext)
-            .GetMethod(nameof(WygenerujNazweZestawu), new[] { typeof(string) })!)
+            .GetMethod(nameof(WygenerujNazweZestawu), new[] { typeof(int), typeof(string) })!)
             .HasName("wygeneruj_nazwe_zestawu")
             .HasSchema("dbo");
 

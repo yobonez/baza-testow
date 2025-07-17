@@ -6,7 +6,7 @@
              xmlns:models="clr-namespace:TestyMAUI.UIModels"
              xmlns:viewmodel="clr-namespace:TestyMAUI.ViewModel"
              x:DataType="viewmodel:SearchViewModel"
-             Title="SearchPage"
+             Title="Wybierz element"
              Loaded="ContentPage_Loaded">
     <Grid RowDefinitions="50, *, 50" ColumnDefinitions="0.15*,0.7*, 0.15*" RowSpacing="10">
         <ImageButton Grid.Column="1" Command="{Binding TapRefreshCommand}" Source="db_refresh.png"
